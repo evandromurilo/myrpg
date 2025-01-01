@@ -1,6 +1,7 @@
 package com.evandromurilo.myrpg.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -49,6 +50,16 @@ public class MainGameScreen implements Screen {
     public void render(float v) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.J)) {
+            player.y -= 1;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
+            player.y += 1;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+            player.x -= 1;
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+            player.x += 1;
+        }
 
         camera.position.x = player.x;
         camera.position.y = player.y;
