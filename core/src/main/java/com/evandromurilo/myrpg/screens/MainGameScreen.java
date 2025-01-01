@@ -38,8 +38,7 @@ public class MainGameScreen implements Screen {
         player = new Entity();
 
         // começa no top left, o mapa é 100x100
-        player.x = 15f;
-        player.y = 90f;
+        player.teleport(15f, 90f);
 
         peopleTexture = new Texture(Gdx.files.internal("People.png"));
         // aqui eu tenho o width e height real do sprite na spritesheet
@@ -51,18 +50,20 @@ public class MainGameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.J)) {
-            player.y -= 1;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
-            player.y += 1;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
-            player.x -= 1;
-        } else if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
-            player.x += 1;
+        player.update(v);
+
+        if (Gdx.input.isKeyPressed(Input.Keys.J)) {
+            player.moveDown();
+        } else if (Gdx.input.isKeyPressed(Input.Keys.K)) {
+            player.moveUp();
+        } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+            player.moveLeft();
+        } else if (Gdx.input.isKeyPressed(Input.Keys.L)) {
+            player.moveRight();
         }
 
-        camera.position.x = player.x;
-        camera.position.y = player.y;
+        camera.position.x = player.getX();
+        camera.position.y = player.getY();
 
         camera.update();
         renderer.setView(camera);
@@ -71,7 +72,7 @@ public class MainGameScreen implements Screen {
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
         // aqui eu tenho o width e height na escala, então 1, 1 = 10x10
-        spriteBatch.draw(player.region, player.x, player.y, 1, 1);
+        spriteBatch.draw(player.region, player.getX(), player.getY(), 1, 1);
         spriteBatch.end();
     }
 
