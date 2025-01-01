@@ -16,8 +16,8 @@ public class MainGameScreen implements Screen {
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
 
-
-    public MainGameScreen() {
+    @Override
+    public void show() {
         map = new TmxMapLoader().load("overworld.tmx");
 
         // aqui são 1/10 porque o tileset é 10px por 10px
@@ -31,11 +31,6 @@ public class MainGameScreen implements Screen {
         // começa no top left, o mapa é 100x100
         camera.position.x = 15;
         camera.position.y = 90;
-    }
-
-    @Override
-    public void show() {
-
     }
 
     @Override
