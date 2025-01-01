@@ -8,11 +8,17 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.evandromurilo.myrpg.Entity;
+import com.evandromurilo.myrpg.Portal;
+
+import java.util.ArrayList;
 
 public class MainGameScreen implements Screen {
     private TiledMap map;
@@ -21,6 +27,7 @@ public class MainGameScreen implements Screen {
     private Entity player;
     private Texture peopleTexture;
     private SpriteBatch spriteBatch;
+    private ArrayList<Portal> portals;
 
     @Override
     public void show() {
@@ -44,6 +51,13 @@ public class MainGameScreen implements Screen {
         peopleTexture = new Texture(Gdx.files.internal("People.png"));
         // aqui eu tenho o width e height real do sprite na spritesheet
         player.region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
+
+        portals = new ArrayList<>();
+        MapLayer portalLayer = map.getLayers().get("Portals");
+
+        for (MapObject obj : portalLayer.getObjects()) {
+            portals.add(new Portal(obj));
+        }
     }
 
     @Override
@@ -63,6 +77,11 @@ public class MainGameScreen implements Screen {
             player.moveRight();
         }
 
+        Portal portal = portalAt(player.getX(), player.getY());
+        if (portal != null) {
+            Gdx.app.debug("Map", "portal hit");
+        }
+
         camera.position.x = player.getX();
         camera.position.y = player.getY();
 
@@ -75,6 +94,16 @@ public class MainGameScreen implements Screen {
         // aqui eu tenho o width e height na escala, então 1, 1 = 10x10
         spriteBatch.draw(player.region, player.getX(), player.getY(), 1, 1);
         spriteBatch.end();
+    }
+
+    private Portal portalAt(float x, float y)
+    {
+        for (Portal portal : portals) {
+            if (portal.hit(x, y)) {
+                return portal;
+            }
+        }
+        return null;
     }
 
     @Override

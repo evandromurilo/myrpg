@@ -1,5 +1,7 @@
 package com.evandromurilo.myrpg.lwjgl3;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.evandromurilo.myrpg.Main;

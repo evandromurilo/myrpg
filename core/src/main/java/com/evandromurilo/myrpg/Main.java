@@ -1,5 +1,6 @@
 package com.evandromurilo.myrpg;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -15,6 +16,7 @@ public class Main extends Game {
 
     @Override
     public void create() {
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
         mainGameScreen = new MainGameScreen();
         setScreen(mainGameScreen);
     }
