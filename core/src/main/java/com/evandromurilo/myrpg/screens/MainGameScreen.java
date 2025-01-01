@@ -88,5 +88,7 @@ public class MainGameScreen implements Screen {
     public void dispose() {
         map.dispose();
         renderer.dispose();
+        peopleTexture.dispose();
+        spriteBatch.dispose();
     }
 }
