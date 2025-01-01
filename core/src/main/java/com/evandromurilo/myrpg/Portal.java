@@ -15,7 +15,7 @@ public class Portal {
 
     public Portal(MapObject mapObject) {
         MapProperties p = mapObject.getProperties();
-        targetMap = (String) p.get("destinationMap");
+        targetMap = (String) p.get("targetMap");
         targetX = (int) p.get("targetX");
         targetY  = (int) p.get("targetY");
 
@@ -28,5 +28,17 @@ public class Portal {
     public boolean hit(float originX, float originY) {
         return originX >= x && originX < x + width &&
             originY >= y && originY < y + height;
+    }
+
+    public float getTargetX() {
+        return (float) targetX;
+    }
+
+    public float getTargetY() {
+        return (float) targetY;
+    }
+
+    public String getTargetMap() {
+        return targetMap;
     }
 }

@@ -31,10 +31,10 @@ public class MainGameScreen implements Screen {
 
     @Override
     public void show() {
-        map = new TmxMapLoader().load("overworld.tmx");
+        player = new Entity();
 
-        // aqui são 1/10 porque o tileset é 10px por 10px
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / 10f);
+        loadMap("overworld.tmx");
+
         camera = new OrthographicCamera();
 
         // aqui eu digo que quero 30 x 20, que vai ser convertido para a escala
@@ -42,8 +42,6 @@ public class MainGameScreen implements Screen {
         camera.setToOrtho(false, 30, 20);
 
         spriteBatch = new SpriteBatch();
-        player = new Entity();
-        player.setMap(map);
 
         // começa no top left, o mapa é 100x100
         player.teleport(15f, 90f);
@@ -51,6 +49,18 @@ public class MainGameScreen implements Screen {
         peopleTexture = new Texture(Gdx.files.internal("People.png"));
         // aqui eu tenho o width e height real do sprite na spritesheet
         player.region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
+    }
+
+    public void loadMap(String mapName) {
+        map = new TmxMapLoader().load(mapName);
+
+        if (renderer != null) {
+            renderer.dispose();
+        }
+
+        // aqui são 1/10 porque o tileset é 10px por 10px
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / 10f);
+        player.setMap(map);
 
         portals = new ArrayList<>();
         MapLayer portalLayer = map.getLayers().get("Portals");
@@ -67,6 +77,20 @@ public class MainGameScreen implements Screen {
 
         player.update(v);
 
+        // kinda awkward, as I need to check only once, when the movement has stopped
+        if (player.isStill()) {
+            Portal portal = portalAt(player.getX(), player.getY());
+            if (portal != null) {
+                Gdx.app.debug("Map", String.format("Portal hit for %s", portal.getTargetMap()));
+                loadMap(portal.getTargetMap());
+                float targetY = portal.getTargetY();
+                // flip y, porque salvamos as coordenadas do jeito que o tiled apresenta
+                // nos outros lugares a framework faz o flip sozinha, com essa mesma conta inclusive
+                targetY = (int) map.getProperties().get("height") - targetY - 1;
+                player.teleport(portal.getTargetX(), targetY);
+            }
+        }
+
         if (Gdx.input.isKeyPressed(Input.Keys.J)) {
             player.moveDown();
         } else if (Gdx.input.isKeyPressed(Input.Keys.K)) {
@@ -75,11 +99,6 @@ public class MainGameScreen implements Screen {
             player.moveLeft();
         } else if (Gdx.input.isKeyPressed(Input.Keys.L)) {
             player.moveRight();
-        }
-
-        Portal portal = portalAt(player.getX(), player.getY());
-        if (portal != null) {
-            Gdx.app.debug("Map", "portal hit");
         }
 
         camera.position.x = player.getX();
