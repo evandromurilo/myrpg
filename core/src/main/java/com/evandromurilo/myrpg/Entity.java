@@ -1,6 +1,8 @@
 package com.evandromurilo.myrpg;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 public class Entity {
     private float x = 0f;
@@ -13,6 +15,7 @@ public class Entity {
     private float targetX;
     private float totalTime = 0.10f;
     private float currentTime;
+    private TiledMap map;
 
     public void update(float v) {
         if (!still) {
@@ -32,6 +35,10 @@ public class Entity {
     public boolean move(float dx, float dy)
     {
         if (still) {
+            if (!canWalk(x+dx, y+dy)) {
+                return false;
+            }
+
             still = false;
             startX = x;
             startY = y;
@@ -42,6 +49,12 @@ public class Entity {
         } else {
             return false;
         }
+    }
+
+    public boolean canWalk(float x, float y)
+    {
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("Collision");
+        return layer.getCell((int) x, (int) y) == null;
     }
 
     public boolean moveUp()
@@ -85,5 +98,9 @@ public class Entity {
 
     private float deltaMovement(float start, float target) {
         return (currentTime/totalTime) * (target-start);
+    }
+
+    public void setMap(TiledMap map) {
+        this.map = map;
     }
 }

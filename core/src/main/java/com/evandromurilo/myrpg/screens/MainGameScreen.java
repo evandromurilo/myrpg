@@ -36,6 +36,7 @@ public class MainGameScreen implements Screen {
 
         spriteBatch = new SpriteBatch();
         player = new Entity();
+        player.setMap(map);
 
         // começa no top left, o mapa é 100x100
         player.teleport(15f, 90f);
