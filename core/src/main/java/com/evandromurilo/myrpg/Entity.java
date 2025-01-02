@@ -54,7 +54,12 @@ public class Entity {
     public boolean canWalk(float x, float y)
     {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("Collision");
-        return layer.getCell((int) x, (int) y) == null;
+        if (layer.getCell((int) x, (int) y) != null) { // cannot have collision tile
+            return false;
+        }
+
+        TiledMapTileLayer base = (TiledMapTileLayer) map.getLayers().get("Base");
+        return base.getCell((int) x, (int) y) != null; // must hava base tile
     }
 
     public boolean moveUp()
