@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -26,6 +27,8 @@ public class MainGameScreen implements Screen {
     private Texture peopleTexture;
     private SpriteBatch spriteBatch;
     private ArrayList<Portal> portals;
+    private ArrayList<Character> npcs;
+
 
     @Override
     public void show() {
@@ -61,9 +64,19 @@ public class MainGameScreen implements Screen {
 
         portals = new ArrayList<>();
         MapLayer portalLayer = map.getLayers().get("Portals");
-
         for (MapObject obj : portalLayer.getObjects()) {
             portals.add(new Portal(obj));
+        }
+
+        npcs = new ArrayList<>();
+        MapLayer npcLayer = map.getLayers().get("NPC");
+        for (MapObject obj : npcLayer.getObjects()) {
+            MapProperties p = obj.getProperties();
+
+            Character npc = new Character();
+            npc.region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
+            npc.teleport((float) p.get("x") / 10f, (float) p.get("y") / 10f);
+            npcs.add(npc);
         }
     }
 
@@ -73,6 +86,10 @@ public class MainGameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         player.update(v, map);
+
+        for (Character npc : npcs) {
+            npc.update(v, map);
+        }
 
         // kinda awkward, as I need to check only once, when the movement has stopped
         if (player.isStill()) {
@@ -112,6 +129,10 @@ public class MainGameScreen implements Screen {
         spriteBatch.begin();
         // aqui eu tenho o width e height na escala, então 1, 1 = 10x10
         spriteBatch.draw(player.region, player.getX(), player.getY(), 1, 1);
+
+        for (Character npc : npcs) {
+            spriteBatch.draw(npc.region, npc.getX(), npc.getY(), 1, 1);
+        }
         spriteBatch.end();
     }
 
