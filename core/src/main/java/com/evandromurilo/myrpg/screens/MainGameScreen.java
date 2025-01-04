@@ -3,6 +3,7 @@ package com.evandromurilo.myrpg.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,6 +11,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.evandromurilo.myrpg.*;
 import com.evandromurilo.myrpg.Character;
 
@@ -21,20 +25,23 @@ public class MainGameScreen implements Screen {
     private SpriteBatch spriteBatch;
     private Level level;
     private BitmapFont font;
+    private Stage stage;
+    private Label messagesLabel;
 
     @Override
     public void show() {
         player = new Character(CharacterType.PLAYER);
         camera = new OrthographicCamera();
-        font = new BitmapFont();
-        font.getData().setScale(0.1f);
-
 
         // aqui eu digo que quero 30 x 20, que vai ser convertido para a escala
         // na prática, ele vai esticar os tiles até caberem 30 na horizontal e 20 na vertical
         camera.setToOrtho(false, 30, 20);
 
         spriteBatch = new SpriteBatch();
+
+        stage = new Stage(new ScreenViewport());
+        messagesLabel = new Label("Hello World",  new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        stage.addActor(messagesLabel);
 
         player.teleport(3f, 30f);
 
@@ -95,16 +102,15 @@ public class MainGameScreen implements Screen {
 
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
-
         for (Character character : level.getCharacters()) {
             // aqui eu tenho o width e height na escala, então 1, 1 = 10x10
             spriteBatch.draw(character.region, character.getX(), character.getY(), 1, 1);
         }
+        spriteBatch.end();
 
         if (player.getState() == CharacterState.TALKING) {
-            font.draw(spriteBatch, "Hello, World!", 10, 30);
+            stage.draw();
         }
-        spriteBatch.end();
     }
 
     @Override
