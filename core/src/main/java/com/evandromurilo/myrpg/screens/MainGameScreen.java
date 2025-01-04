@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.evandromurilo.myrpg.Character;
+import com.evandromurilo.myrpg.CharacterState;
 import com.evandromurilo.myrpg.Portal;
 
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class MainGameScreen implements Screen {
         }
 
         // kinda awkward, as I need to check only once, when the movement has stopped
-        if (player.isStill()) {
+        if (player.getState() == CharacterState.IDLE) {
             Portal portal = portalAt(player.getX(), player.getY());
             if (portal != null) {
                 Gdx.app.debug("Map", String.format("Portal hit for %s", portal.getTargetMap()));
@@ -99,7 +100,7 @@ public class MainGameScreen implements Screen {
             }
         }
 
-        if (player.isStill()) {
+        if (player.getState() == CharacterState.IDLE) {
             if (Gdx.input.isKeyPressed(Input.Keys.J)) {
                 player.setMoveTarget(0, -1);
             } else if (Gdx.input.isKeyPressed(Input.Keys.K)) {

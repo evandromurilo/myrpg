@@ -11,7 +11,7 @@ public class Character {
     private float x = 0f;
     private float y = 0f;
     public TextureRegion region;
-    private boolean still = true;
+    private CharacterState state = CharacterState.IDLE;
     private float startX;
     private float startY;
     private float targetY;
@@ -35,17 +35,17 @@ public class Character {
     }
 
     public void update(float v, TiledMap map) {
-        if (still && (targetY != y || targetX != x) && canWalk(map, targetX, targetY)) {
+        if (state == CharacterState.IDLE && (targetY != y || targetX != x) && canWalk(map, targetX, targetY)) {
             startMove();
         }
 
-        if (!still) {
+        if (state == CharacterState.WALKING) {
             currentTime += v;
 
             if (currentTime >= totalTime) {
                 x = targetX;
                 y = targetY;
-                still = true;
+                state = CharacterState.IDLE;
             } else {
                 x = startX+deltaMovement(startX, targetX);
                 y = startY+deltaMovement(startY, targetY);
@@ -55,7 +55,7 @@ public class Character {
 
     public void startMove()
     {
-        still = false;
+        state = CharacterState.WALKING;
         startX = x;
         startY = y;
         currentTime = 0f;
@@ -77,8 +77,8 @@ public class Character {
         targetY = y+dy;
     }
 
-    public boolean isStill() {
-        return still;
+    public CharacterState getState() {
+        return state;
     }
 
     public float getX() {
@@ -91,7 +91,7 @@ public class Character {
 
     public void teleport(float tx, float ty)
     {
-        still = true;
+        state = CharacterState.IDLE;
         x = tx;
         y = ty;
         targetX = x;
