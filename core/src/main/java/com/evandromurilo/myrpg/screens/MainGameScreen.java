@@ -60,18 +60,15 @@ public class MainGameScreen implements Screen {
 
         level.update(v);
 
-        // kinda awkward, as I need to check only once, when the movement has stopped
-        if (player.getState() == CharacterState.IDLE) {
+        if (player.getState() == CharacterState.ON_PORTAL) {
             Portal portal = level.portalAt(player.getX(), player.getY());
-            if (portal != null) {
-                Gdx.app.debug("Map", String.format("Portal hit for %s", portal.getTargetMap()));
-                loadMap(portal.getTargetMap());
-                float targetY = portal.getTargetY();
-                // flip y, porque salvamos as coordenadas do jeito que o tiled apresenta
-                // nos outros lugares a framework faz o flip sozinha, com essa mesma conta inclusive
-                targetY = (int) level.getMap().getProperties().get("height") - targetY - 1;
-                player.teleport(portal.getTargetX(), targetY);
-            }
+            Gdx.app.debug("Map", String.format("Portal hit for %s", portal.getTargetMap()));
+            loadMap(portal.getTargetMap());
+            float targetY = portal.getTargetY();
+            // flip y, porque salvamos as coordenadas do jeito que o tiled apresenta
+            // nos outros lugares a framework faz o flip sozinha, com essa mesma conta inclusive
+            targetY = (int) level.getMap().getProperties().get("height") - targetY - 1;
+            player.teleport(portal.getTargetX(), targetY);
         }
 
         if (player.getState() == CharacterState.IDLE) {

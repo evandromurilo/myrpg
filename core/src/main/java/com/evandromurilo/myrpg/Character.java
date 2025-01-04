@@ -34,8 +34,8 @@ public class Character {
 
     }
 
-    public void update(float v, TiledMap map) {
-        if (state == CharacterState.IDLE && (targetY != y || targetX != x) && canWalk(map, targetX, targetY)) {
+    public void update(float v, Level level) {
+        if (state == CharacterState.IDLE && (targetY != y || targetX != x) && canWalk(level.getMap(), targetX, targetY)) {
             startMove();
         }
 
@@ -45,7 +45,12 @@ public class Character {
             if (currentTime >= totalTime) {
                 x = targetX;
                 y = targetY;
-                state = CharacterState.IDLE;
+
+                if (level.portalAt(x, y) != null) {
+                    state = CharacterState.ON_PORTAL;
+                } else {
+                    state = CharacterState.IDLE;
+                }
             } else {
                 x = startX+deltaMovement(startX, targetX);
                 y = startY+deltaMovement(startY, targetY);

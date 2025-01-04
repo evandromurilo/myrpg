@@ -47,7 +47,7 @@ public class Level {
 
     public void update(float v) {
         for (Character character : characters) {
-            character.update(v, map);
+            character.update(v, this);
         }
     }
 
