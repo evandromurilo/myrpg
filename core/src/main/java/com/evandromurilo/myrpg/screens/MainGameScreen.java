@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.evandromurilo.myrpg.*;
 import com.evandromurilo.myrpg.Character;
@@ -27,6 +28,7 @@ public class MainGameScreen implements Screen {
     private BitmapFont font;
     private Stage stage;
     private Label messagesLabel;
+    private Table table;
 
     @Override
     public void show() {
@@ -39,9 +41,13 @@ public class MainGameScreen implements Screen {
 
         spriteBatch = new SpriteBatch();
 
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage();
+        table = new Table();
+        table.setFillParent(true);
         messagesLabel = new Label("Hello World",  new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        stage.addActor(messagesLabel);
+        table.add(messagesLabel).padLeft(20).padBottom(20);
+        table.left().bottom();
+        stage.addActor(table);
 
         player.teleport(3f, 30f);
 
@@ -108,8 +114,10 @@ public class MainGameScreen implements Screen {
         }
         spriteBatch.end();
 
+        stage.draw();
+
         if (player.getState() == CharacterState.TALKING) {
-            stage.draw();
+
         }
     }
 
