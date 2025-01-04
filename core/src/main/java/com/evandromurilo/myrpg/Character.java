@@ -43,8 +43,10 @@ public class Character {
             Character character = level.characterAt(targetX, targetY);
             if (character != null) {
                 if (character.getType() == CharacterType.MERCHANT) {
-                    target = character;
+                    level.echo("Greetings, adventurer!");
                     state = CharacterState.TALKING;
+                    currentTime = 0;
+                    // target = character;
                 }
             } else if (canWalk(level, targetX, targetY)) {
                 startMove();
@@ -66,6 +68,13 @@ public class Character {
             } else {
                 x = startX+deltaMovement(startX, targetX);
                 y = startY+deltaMovement(startY, targetY);
+            }
+        } else if (state == CharacterState.TALKING) {
+            currentTime += v;
+
+            if (currentTime >= totalTime) {
+                clearTarget();
+                state = CharacterState.IDLE;
             }
         }
     }

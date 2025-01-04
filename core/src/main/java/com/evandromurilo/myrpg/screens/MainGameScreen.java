@@ -44,13 +44,12 @@ public class MainGameScreen implements Screen {
         // aqui eu tenho o width e height real do sprite na spritesheet
         player.region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
 
-        loadMap("village.tmx");
-
         messageBox = new MessageBox();
+        loadMap("village.tmx");
     }
 
     public void loadMap(String mapName) {
-        level = new Level(mapName, peopleTexture);
+        level = new Level(mapName, peopleTexture, messageBox);
         level.addCharacter(player);
         if (renderer != null) {
             renderer.setMap(level.getMap());

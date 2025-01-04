@@ -15,10 +15,12 @@ public class Level {
     private ArrayList<Character> characters;
     private String mapName;
     private Texture peopleTexture;
+    private MessageBox messageBox;
 
-    public Level(String mapName, Texture peopleTexture) {
+    public Level(String mapName, Texture peopleTexture, MessageBox messageBox) {
         map = new TmxMapLoader().load(mapName);
         this.mapName = mapName;
+        this.messageBox = messageBox;
         portals = new ArrayList<>();
         MapLayer portalLayer = map.getLayers().get("Portals");
         for (MapObject obj : portalLayer.getObjects()) {
@@ -77,6 +79,10 @@ public class Level {
         for (Character character : characters) {
             character.update(v, this);
         }
+    }
+
+    public void echo(String message) {
+        messageBox.push(message);
     }
 
     public ArrayList<Character> getCharacters() {
