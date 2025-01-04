@@ -21,7 +21,12 @@ public class Character {
 
     public Character(MapObject obj, Texture peopleTexture) {
         MapProperties p = obj.getProperties();
-        region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
+        if (p.get("type").equals("merchant")) {
+            region = new TextureRegion(peopleTexture, 0, 20, 10, 10);
+        } else {
+            region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
+        }
+
         teleport((float) p.get("x") / 10f, (float) p.get("y") / 10f);
     }
 

@@ -33,9 +33,6 @@ public class MainGameScreen implements Screen {
     @Override
     public void show() {
         player = new Character();
-
-        loadMap("overworld.tmx");
-
         camera = new OrthographicCamera();
 
         // aqui eu digo que quero 30 x 20, que vai ser convertido para a escala
@@ -44,12 +41,13 @@ public class MainGameScreen implements Screen {
 
         spriteBatch = new SpriteBatch();
 
-        // começa no top left, o mapa é 100x100
-        player.teleport(15f, 90f);
+        player.teleport(3f, 30f);
 
         peopleTexture = new Texture(Gdx.files.internal("People.png"));
         // aqui eu tenho o width e height real do sprite na spritesheet
         player.region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
+
+        loadMap("village.tmx");
     }
 
     public void loadMap(String mapName) {
