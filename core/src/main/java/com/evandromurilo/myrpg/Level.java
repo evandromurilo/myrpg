@@ -54,5 +54,9 @@ public class Level {
     public ArrayList<Character> getCharacters() {
         return characters;
     }
+
+    public void addCharacter(Character character) {
+        characters.add(character);
+    }
 }
 

@@ -44,6 +44,7 @@ public class MainGameScreen implements Screen {
 
     public void loadMap(String mapName) {
         level = new Level(mapName, peopleTexture);
+        level.addCharacter(player);
         if (renderer != null) {
             renderer.setMap(level.getMap());
         } else {
@@ -57,7 +58,6 @@ public class MainGameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        player.update(v, level.getMap());
         level.update(v);
 
         // kinda awkward, as I need to check only once, when the movement has stopped
