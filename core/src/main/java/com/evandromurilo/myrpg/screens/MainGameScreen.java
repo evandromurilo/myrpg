@@ -8,17 +8,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.evandromurilo.myrpg.Character;
 import com.evandromurilo.myrpg.CharacterState;
 import com.evandromurilo.myrpg.Level;
 import com.evandromurilo.myrpg.Portal;
-
-import java.util.ArrayList;
 
 public class MainGameScreen implements Screen {
     private OrthogonalTiledMapRenderer renderer;
