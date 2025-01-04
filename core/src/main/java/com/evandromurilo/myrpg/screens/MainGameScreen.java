@@ -25,10 +25,7 @@ public class MainGameScreen implements Screen {
     private Texture peopleTexture;
     private SpriteBatch spriteBatch;
     private Level level;
-    private BitmapFont font;
-    private Stage stage;
-    private Label messagesLabel;
-    private Table table;
+    private MessageBox messageBox;
 
     @Override
     public void show() {
@@ -41,14 +38,6 @@ public class MainGameScreen implements Screen {
 
         spriteBatch = new SpriteBatch();
 
-        stage = new Stage();
-        table = new Table();
-        table.setFillParent(true);
-        messagesLabel = new Label("Hello World",  new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        table.add(messagesLabel).padLeft(20).padBottom(20);
-        table.left().bottom();
-        stage.addActor(table);
-
         player.teleport(3f, 30f);
 
         peopleTexture = new Texture(Gdx.files.internal("People.png"));
@@ -56,6 +45,8 @@ public class MainGameScreen implements Screen {
         player.region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
 
         loadMap("village.tmx");
+
+        messageBox = new MessageBox();
     }
 
     public void loadMap(String mapName) {
@@ -114,7 +105,7 @@ public class MainGameScreen implements Screen {
         }
         spriteBatch.end();
 
-        stage.draw();
+        messageBox.draw();
 
         if (player.getState() == CharacterState.TALKING) {
 
