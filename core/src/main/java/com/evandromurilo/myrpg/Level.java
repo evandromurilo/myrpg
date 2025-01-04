@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 import java.util.ArrayList;
@@ -30,6 +31,16 @@ public class Level {
             Character character = new Character(obj, peopleTexture);
             characters.add(character);
         }
+    }
+
+    public boolean hasCollision(float x, float y) {
+        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("Collision");
+        return layer.getCell((int) x, (int) y) != null;
+    }
+
+    public boolean hasBaseTile(float x, float y) {
+        TiledMapTileLayer base = (TiledMapTileLayer) map.getLayers().get("Base");
+        return base.getCell((int) x, (int) y) != null;
     }
 
     public TiledMap getMap() {

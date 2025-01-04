@@ -35,7 +35,7 @@ public class Character {
     }
 
     public void update(float v, Level level) {
-        if (state == CharacterState.IDLE && (targetY != y || targetX != x) && canWalk(level.getMap(), targetX, targetY)) {
+        if (state == CharacterState.IDLE && (targetY != y || targetX != x) && canWalk(level, targetX, targetY)) {
             startMove();
         }
 
@@ -66,15 +66,13 @@ public class Character {
         currentTime = 0f;
     }
 
-    public boolean canWalk(TiledMap map, float x, float y)
+    public boolean canWalk(Level level, float x, float y)
     {
-        TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("Collision");
-        if (layer.getCell((int) x, (int) y) != null) { // cannot have collision tile
+        if (level.hasCollision(x, y)) {
             return false;
         }
 
-        TiledMapTileLayer base = (TiledMapTileLayer) map.getLayers().get("Base");
-        return base.getCell((int) x, (int) y) != null; // must hava base tile
+        return level.hasBaseTile(x, y);
     }
 
     public void setMoveTarget(float dx, float dy) {
