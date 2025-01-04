@@ -12,24 +12,21 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.evandromurilo.myrpg.Character;
 import com.evandromurilo.myrpg.CharacterState;
+import com.evandromurilo.myrpg.Level;
 import com.evandromurilo.myrpg.Portal;
 
 import java.util.ArrayList;
 
 public class MainGameScreen implements Screen {
-    private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
     private Character player;
     private Texture peopleTexture;
     private SpriteBatch spriteBatch;
-    private ArrayList<Portal> portals;
-    private ArrayList<Character> npcs;
-
+    private Level level;
 
     @Override
     public void show() {
@@ -52,26 +49,12 @@ public class MainGameScreen implements Screen {
     }
 
     public void loadMap(String mapName) {
-        map = new TmxMapLoader().load(mapName);
-
+        level = new Level(mapName, peopleTexture);
         if (renderer != null) {
-            renderer.dispose();
-        }
-
-        // aqui são 1/10 porque o tileset é 10px por 10px
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / 10f);
-
-        portals = new ArrayList<>();
-        MapLayer portalLayer = map.getLayers().get("Portals");
-        for (MapObject obj : portalLayer.getObjects()) {
-            portals.add(new Portal(obj));
-        }
-
-        npcs = new ArrayList<>();
-        MapLayer npcLayer = map.getLayers().get("NPC");
-        for (MapObject obj : npcLayer.getObjects()) {
-            Character npc = new Character(obj, peopleTexture);
-            npcs.add(npc);
+            renderer.setMap(level.getMap());
+        } else {
+            // aqui são 1/10 porque o tileset é 10px por 10px
+            renderer = new OrthogonalTiledMapRenderer(level.getMap(), 1 / 10f);
         }
     }
 
@@ -80,22 +63,19 @@ public class MainGameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        player.update(v, map);
-
-        for (Character npc : npcs) {
-            npc.update(v, map);
-        }
+        player.update(v, level.getMap());
+        level.update(v);
 
         // kinda awkward, as I need to check only once, when the movement has stopped
         if (player.getState() == CharacterState.IDLE) {
-            Portal portal = portalAt(player.getX(), player.getY());
+            Portal portal = level.portalAt(player.getX(), player.getY());
             if (portal != null) {
                 Gdx.app.debug("Map", String.format("Portal hit for %s", portal.getTargetMap()));
                 loadMap(portal.getTargetMap());
                 float targetY = portal.getTargetY();
                 // flip y, porque salvamos as coordenadas do jeito que o tiled apresenta
                 // nos outros lugares a framework faz o flip sozinha, com essa mesma conta inclusive
-                targetY = (int) map.getProperties().get("height") - targetY - 1;
+                targetY = (int) level.getMap().getProperties().get("height") - targetY - 1;
                 player.teleport(portal.getTargetX(), targetY);
             }
         }
@@ -112,7 +92,6 @@ public class MainGameScreen implements Screen {
             }
         }
 
-
         camera.position.x = player.getX();
         camera.position.y = player.getY();
 
@@ -125,20 +104,10 @@ public class MainGameScreen implements Screen {
         // aqui eu tenho o width e height na escala, então 1, 1 = 10x10
         spriteBatch.draw(player.region, player.getX(), player.getY(), 1, 1);
 
-        for (Character npc : npcs) {
-            spriteBatch.draw(npc.region, npc.getX(), npc.getY(), 1, 1);
+        for (Character character : level.getCharacters()) {
+            spriteBatch.draw(character.region, character.getX(), character.getY(), 1, 1);
         }
         spriteBatch.end();
-    }
-
-    private Portal portalAt(float x, float y)
-    {
-        for (Portal portal : portals) {
-            if (portal.hit(x, y)) {
-                return portal;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -163,7 +132,7 @@ public class MainGameScreen implements Screen {
 
     @Override
     public void dispose() {
-        map.dispose();
+        level.getMap().dispose();
         renderer.dispose();
         peopleTexture.dispose();
         spriteBatch.dispose();
