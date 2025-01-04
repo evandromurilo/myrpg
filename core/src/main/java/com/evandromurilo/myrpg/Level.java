@@ -51,6 +51,10 @@ public class Level {
         return map;
     }
 
+    public int getHeight() {
+        return (int) map.getProperties().get("height");
+    }
+
     public Portal portalAt(float x, float y) {
         for (Portal portal : portals) {
             if (portal.hit(x, y)) {

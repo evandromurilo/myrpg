@@ -6,13 +6,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.evandromurilo.myrpg.*;
 import com.evandromurilo.myrpg.Character;
-import com.evandromurilo.myrpg.CharacterState;
-import com.evandromurilo.myrpg.Level;
-import com.evandromurilo.myrpg.Portal;
 
 public class MainGameScreen implements Screen {
     private OrthogonalTiledMapRenderer renderer;
@@ -21,11 +20,15 @@ public class MainGameScreen implements Screen {
     private Texture peopleTexture;
     private SpriteBatch spriteBatch;
     private Level level;
+    private BitmapFont font;
 
     @Override
     public void show() {
-        player = new Character();
+        player = new Character(CharacterType.PLAYER);
         camera = new OrthographicCamera();
+        font = new BitmapFont();
+        font.getData().setScale(0.1f);
+
 
         // aqui eu digo que quero 30 x 20, que vai ser convertido para a escala
         // na prática, ele vai esticar os tiles até caberem 30 na horizontal e 20 na vertical
@@ -67,19 +70,19 @@ public class MainGameScreen implements Screen {
             float targetY = portal.getTargetY();
             // flip y, porque salvamos as coordenadas do jeito que o tiled apresenta
             // nos outros lugares a framework faz o flip sozinha, com essa mesma conta inclusive
-            targetY = (int) level.getMap().getProperties().get("height") - targetY - 1;
+            targetY = (int) level.getHeight()- targetY - 1;
             player.teleport(portal.getTargetX(), targetY);
         }
 
         if (player.getState() == CharacterState.IDLE) {
             if (Gdx.input.isKeyPressed(Input.Keys.J)) {
-                player.setMoveTarget(0, -1);
+                player.setTarget(0, -1);
             } else if (Gdx.input.isKeyPressed(Input.Keys.K)) {
-                player.setMoveTarget(0, 1);
+                player.setTarget(0, 1);
             } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
-                player.setMoveTarget(-1, 0);
+                player.setTarget(-1, 0);
             } else if (Gdx.input.isKeyPressed(Input.Keys.L)) {
-                player.setMoveTarget(1, 0);
+                player.setTarget(1, 0);
             }
         }
 
@@ -92,11 +95,14 @@ public class MainGameScreen implements Screen {
 
         spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
-        // aqui eu tenho o width e height na escala, então 1, 1 = 10x10
-        spriteBatch.draw(player.region, player.getX(), player.getY(), 1, 1);
 
         for (Character character : level.getCharacters()) {
+            // aqui eu tenho o width e height na escala, então 1, 1 = 10x10
             spriteBatch.draw(character.region, character.getX(), character.getY(), 1, 1);
+        }
+
+        if (player.getState() == CharacterState.TALKING) {
+            font.draw(spriteBatch, "Hello, World!", 10, 30);
         }
         spriteBatch.end();
     }

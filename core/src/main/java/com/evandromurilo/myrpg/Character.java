@@ -16,12 +16,15 @@ public class Character {
     private float startY;
     private float targetY;
     private float targetX;
+    private Character target;
     private float totalTime = 0.10f;
     private float currentTime;
+    private CharacterType type;
 
     public Character(MapObject obj, Texture peopleTexture) {
         MapProperties p = obj.getProperties();
         if (p.get("type").equals("merchant")) {
+            type = CharacterType.MERCHANT;
             region = new TextureRegion(peopleTexture, 0, 20, 10, 10);
         } else {
             region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
@@ -30,13 +33,22 @@ public class Character {
         teleport((float) p.get("x") / 10f, (float) p.get("y") / 10f);
     }
 
-    public Character() {
-
+    public Character(CharacterType type) {
+        this.type = type;
     }
 
     public void update(float v, Level level) {
-        if (state == CharacterState.IDLE && (targetY != y || targetX != x) && canWalk(level, targetX, targetY)) {
-            startMove();
+        if (state == CharacterState.IDLE && (targetY != y || targetX != x)) {
+            // for now assuming 1 step increments
+            Character character = level.characterAt(targetX, targetY);
+            if (character != null) {
+                if (character.getType() == CharacterType.MERCHANT) {
+                    target = character;
+                    state = CharacterState.TALKING;
+                }
+            } else if (canWalk(level, targetX, targetY)) {
+                startMove();
+            }
         }
 
         if (state == CharacterState.WALKING) {
@@ -56,6 +68,10 @@ public class Character {
                 y = startY+deltaMovement(startY, targetY);
             }
         }
+    }
+
+    public CharacterType getType() {
+        return type;
     }
 
     public void startMove()
@@ -79,9 +95,15 @@ public class Character {
         return level.hasBaseTile(x, y);
     }
 
-    public void setMoveTarget(float dx, float dy) {
+    public void setTarget(float dx, float dy) {
         targetX = x+dx;
         targetY = y+dy;
+    }
+
+    public void clearTarget() {
+        targetX = x;
+        targetY = y;
+        target = null;
     }
 
     public CharacterState getState() {
@@ -94,6 +116,10 @@ public class Character {
 
     public float getY() {
         return y;
+    }
+
+    public Character getTarget() {
+        return target;
     }
 
     public void teleport(float tx, float ty)

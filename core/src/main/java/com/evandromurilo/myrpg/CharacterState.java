@@ -2,5 +2,7 @@ package com.evandromurilo.myrpg;
 
 public enum CharacterState {
     IDLE,
-    ON_PORTAL, WALKING
+    ON_PORTAL,
+    WALKING,
+    TALKING
 }
