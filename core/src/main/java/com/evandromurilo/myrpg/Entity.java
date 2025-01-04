@@ -15,9 +15,12 @@ public class Entity {
     private float targetX;
     private float totalTime = 0.10f;
     private float currentTime;
-    private TiledMap map;
 
-    public void update(float v) {
+    public void update(float v, TiledMap map) {
+        if (still && (targetY != y || targetX != x) && canWalk(map, targetX, targetY)) {
+            startMove();
+        }
+
         if (!still) {
             currentTime += v;
 
@@ -32,26 +35,15 @@ public class Entity {
         }
     }
 
-    public boolean move(float dx, float dy)
+    public void startMove()
     {
-        if (still) {
-            if (!canWalk(x+dx, y+dy)) {
-                return false;
-            }
-
-            still = false;
-            startX = x;
-            startY = y;
-            targetX = x+dx;
-            targetY = y+dy;
-            currentTime = 0f;
-            return true;
-        } else {
-            return false;
-        }
+        still = false;
+        startX = x;
+        startY = y;
+        currentTime = 0f;
     }
 
-    public boolean canWalk(float x, float y)
+    public boolean canWalk(TiledMap map, float x, float y)
     {
         TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("Collision");
         if (layer.getCell((int) x, (int) y) != null) { // cannot have collision tile
@@ -62,24 +54,9 @@ public class Entity {
         return base.getCell((int) x, (int) y) != null; // must hava base tile
     }
 
-    public boolean moveUp()
-    {
-        return move(0, 1);
-    }
-
-    public boolean moveDown()
-    {
-        return move(0, -1);
-    }
-
-    public boolean moveLeft()
-    {
-        return move(-1, 0);
-    }
-
-    public boolean moveRight()
-    {
-        return move(1, 0);
+    public void setMoveTarget(float dx, float dy) {
+        targetX = x+dx;
+        targetY = y+dy;
     }
 
     public boolean isStill() {
@@ -99,13 +76,11 @@ public class Entity {
         still = true;
         x = tx;
         y = ty;
+        targetX = x;
+        targetY = y;
     }
 
     private float deltaMovement(float start, float target) {
         return (currentTime/totalTime) * (target-start);
-    }
-
-    public void setMap(TiledMap map) {
-        this.map = map;
     }
 }

@@ -60,7 +60,6 @@ public class MainGameScreen implements Screen {
 
         // aqui são 1/10 porque o tileset é 10px por 10px
         renderer = new OrthogonalTiledMapRenderer(map, 1 / 10f);
-        player.setMap(map);
 
         portals = new ArrayList<>();
         MapLayer portalLayer = map.getLayers().get("Portals");
@@ -75,7 +74,7 @@ public class MainGameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        player.update(v);
+        player.update(v, map);
 
         // kinda awkward, as I need to check only once, when the movement has stopped
         if (player.isStill()) {
@@ -91,15 +90,18 @@ public class MainGameScreen implements Screen {
             }
         }
 
-        if (Gdx.input.isKeyPressed(Input.Keys.J)) {
-            player.moveDown();
-        } else if (Gdx.input.isKeyPressed(Input.Keys.K)) {
-            player.moveUp();
-        } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
-            player.moveLeft();
-        } else if (Gdx.input.isKeyPressed(Input.Keys.L)) {
-            player.moveRight();
+        if (player.isStill()) {
+            if (Gdx.input.isKeyPressed(Input.Keys.J)) {
+                player.setMoveTarget(0, -1);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.K)) {
+                player.setMoveTarget(0, 1);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+                player.setMoveTarget(-1, 0);
+            } else if (Gdx.input.isKeyPressed(Input.Keys.L)) {
+                player.setMoveTarget(1, 0);
+            }
         }
+
 
         camera.position.x = player.getX();
         camera.position.y = player.getY();
