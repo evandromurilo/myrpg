@@ -11,11 +11,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.evandromurilo.myrpg.Entity;
+import com.evandromurilo.myrpg.Character;
 import com.evandromurilo.myrpg.Portal;
 
 import java.util.ArrayList;
@@ -24,14 +22,14 @@ public class MainGameScreen implements Screen {
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
     private OrthographicCamera camera;
-    private Entity player;
+    private Character player;
     private Texture peopleTexture;
     private SpriteBatch spriteBatch;
     private ArrayList<Portal> portals;
 
     @Override
     public void show() {
-        player = new Entity();
+        player = new Character();
 
         loadMap("overworld.tmx");
 
