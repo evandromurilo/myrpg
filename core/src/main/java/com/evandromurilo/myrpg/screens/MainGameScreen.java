@@ -71,11 +71,7 @@ public class MainGameScreen implements Screen {
         npcs = new ArrayList<>();
         MapLayer npcLayer = map.getLayers().get("NPC");
         for (MapObject obj : npcLayer.getObjects()) {
-            MapProperties p = obj.getProperties();
-
-            Character npc = new Character();
-            npc.region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
-            npc.teleport((float) p.get("x") / 10f, (float) p.get("y") / 10f);
+            Character npc = new Character(obj, peopleTexture);
             npcs.add(npc);
         }
     }

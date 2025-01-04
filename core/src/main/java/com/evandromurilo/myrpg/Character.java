@@ -1,6 +1,9 @@
 package com.evandromurilo.myrpg;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
@@ -15,6 +18,16 @@ public class Character {
     private float targetX;
     private float totalTime = 0.10f;
     private float currentTime;
+
+    public Character(MapObject obj, Texture peopleTexture) {
+        MapProperties p = obj.getProperties();
+        region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
+        teleport((float) p.get("x") / 10f, (float) p.get("y") / 10f);
+    }
+
+    public Character() {
+
+    }
 
     public void update(float v, TiledMap map) {
         if (still && (targetY != y || targetX != x) && canWalk(map, targetX, targetY)) {
