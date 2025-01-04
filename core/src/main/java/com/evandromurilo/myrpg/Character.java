@@ -72,6 +72,10 @@ public class Character {
             return false;
         }
 
+        if (level.hasCharacter(x, y)) {
+            return false;
+        }
+
         return level.hasBaseTile(x, y);
     }
 

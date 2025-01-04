@@ -43,6 +43,10 @@ public class Level {
         return base.getCell((int) x, (int) y) != null;
     }
 
+    public boolean hasCharacter(float x, float y) {
+        return characterAt(x, y) != null;
+    }
+
     public TiledMap getMap() {
         return map;
     }
@@ -51,6 +55,15 @@ public class Level {
         for (Portal portal : portals) {
             if (portal.hit(x, y)) {
                 return portal;
+            }
+        }
+        return null;
+    }
+
+    public Character characterAt(float x, float y) {
+        for (Character character : characters) {
+            if (character.getX() == x && character.getY() == y) {
+                return character;
             }
         }
         return null;
