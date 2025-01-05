@@ -104,11 +104,7 @@ public class MainGameScreen implements Screen {
         }
         spriteBatch.end();
 
-        messageBox.draw();
-
-        if (player.getState() == CharacterState.TALKING) {
-
-        }
+        messageBox.draw(v);
     }
 
     @Override
