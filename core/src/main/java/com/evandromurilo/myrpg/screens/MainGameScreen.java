@@ -92,6 +92,10 @@ public class MainGameScreen implements Screen {
             }
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+            messageBox.clear();
+        }
+
         camera.position.x = player.getX();
         camera.position.y = player.getY();
 

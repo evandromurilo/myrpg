@@ -3,6 +3,7 @@ package com.evandromurilo.myrpg;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -45,6 +46,11 @@ public class MessageBox {
         Cell<Label> newMessage = messagesTable.add(text);
         newMessage.width(150).row();
         messageScroller.scrollTo(0, 0, 0, 0);
+    }
+
+    public void clear() {
+        messagesTable.clearChildren();
+        messages.clear();
     }
 
     public void draw(float v) {
