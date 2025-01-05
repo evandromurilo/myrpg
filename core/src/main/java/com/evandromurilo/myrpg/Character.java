@@ -19,6 +19,7 @@ public class Character {
     private Character target;
     private float totalTime = 0.10f;
     private float currentTime;
+    private int hp = 10;
     private CharacterType type;
 
     public Character(MapObject obj, Texture peopleTexture) {
@@ -47,15 +48,21 @@ public class Character {
                     state = CharacterState.TALKING;
                     currentTime = 0;
                     // target = character;
+                } else if (character.getType() == CharacterType.MONSTER) {
+                    state = CharacterState.ATTACKING;
+                    target = character;
+                    currentTime = 0;
                 }
             } else if (canWalk(level, targetX, targetY)) {
                 startMove();
             }
         }
 
-        if (state == CharacterState.WALKING) {
+        if (state != CharacterState.IDLE) {
             currentTime += v;
+        }
 
+        if (state == CharacterState.WALKING) {
             if (currentTime >= totalTime) {
                 x = targetX;
                 y = targetY;
@@ -70,17 +77,40 @@ public class Character {
                 y = startY+deltaMovement(startY, targetY);
             }
         } else if (state == CharacterState.TALKING) {
-            currentTime += v;
-
             if (currentTime >= totalTime) {
                 clearTarget();
                 state = CharacterState.IDLE;
+            }
+        } else if (state == CharacterState.ATTACKING) {
+            if (currentTime >= totalTime) {
+                doAttack(level);
             }
         }
     }
 
     public CharacterType getType() {
         return type;
+    }
+
+    public void doAttack(Level level) {
+        int damage = target.receiveHit(2);
+        level.echo(String.format("You hit for %d damage", damage));
+        if (target.getState() == CharacterState.DEAD) {
+            level.echo("You kill the enemy!");
+            target = null;
+        }
+        state = CharacterState.IDLE;
+        clearTarget();
+    }
+
+    public int receiveHit(int strength) {
+        hp -= strength;
+        if (hp <= 0) {
+            state = CharacterState.DEAD;
+            return strength+hp;
+        } else {
+            return strength;
+        }
     }
 
     public void startMove()

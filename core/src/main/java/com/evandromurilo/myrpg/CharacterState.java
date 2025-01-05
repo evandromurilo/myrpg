@@ -4,5 +4,6 @@ public enum CharacterState {
     IDLE,
     ON_PORTAL,
     WALKING,
-    TALKING
+    TALKING,
+    DEAD, ATTACKING
 }

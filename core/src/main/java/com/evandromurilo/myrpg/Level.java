@@ -87,6 +87,8 @@ public class Level {
         for (Character character : characters) {
             character.update(v, this);
         }
+
+        characters.removeIf(c -> c.getState() == CharacterState.DEAD);
     }
 
     public void echo(String message) {
