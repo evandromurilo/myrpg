@@ -23,6 +23,7 @@ public class MainGameScreen implements Screen {
     private OrthographicCamera camera;
     private Character player;
     private Texture peopleTexture;
+    private Texture creatureTexture;
     private SpriteBatch spriteBatch;
     private Level level;
     private MessageBox messageBox;
@@ -41,6 +42,8 @@ public class MainGameScreen implements Screen {
         player.teleport(3f, 30f);
 
         peopleTexture = new Texture(Gdx.files.internal("People.png"));
+        creatureTexture = new Texture(Gdx.files.internal("Creatures.png"));
+
         // aqui eu tenho o width e height real do sprite na spritesheet
         player.region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
 
@@ -49,7 +52,7 @@ public class MainGameScreen implements Screen {
     }
 
     public void loadMap(String mapName) {
-        level = new Level(mapName, peopleTexture, messageBox);
+        level = new Level(mapName, peopleTexture, creatureTexture, messageBox);
         level.addCharacter(player);
         if (renderer != null) {
             renderer.setMap(level.getMap());

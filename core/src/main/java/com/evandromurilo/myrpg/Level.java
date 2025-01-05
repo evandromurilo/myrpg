@@ -1,6 +1,7 @@
 package com.evandromurilo.myrpg;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -15,12 +16,14 @@ public class Level {
     private ArrayList<Character> characters;
     private String mapName;
     private Texture peopleTexture;
+    private Texture creatureTexture;
     private MessageBox messageBox;
 
-    public Level(String mapName, Texture peopleTexture, MessageBox messageBox) {
+    public Level(String mapName, Texture peopleTexture, Texture creatureTexture, MessageBox messageBox) {
         map = new TmxMapLoader().load(mapName);
         this.mapName = mapName;
         this.messageBox = messageBox;
+        this.creatureTexture = creatureTexture;
         portals = new ArrayList<>();
         MapLayer portalLayer = map.getLayers().get("Portals");
         for (MapObject obj : portalLayer.getObjects()) {
@@ -33,6 +36,11 @@ public class Level {
             Character character = new Character(obj, peopleTexture);
             characters.add(character);
         }
+
+        Character monster = new Character(CharacterType.MONSTER);
+        monster.region = new TextureRegion(creatureTexture, 0, 0, 10, 10);
+        monster.teleport(3f, 35f);
+        characters.add(monster);
     }
 
     public boolean hasCollision(float x, float y) {
