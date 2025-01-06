@@ -100,22 +100,25 @@ public class Level {
     }
 
     public void update(float v) {
-        Character head = turnQueue.element();
+        while (turnQueue.element().getState() == CharacterState.FINISHED_ACTION) {
+            Character head = turnQueue.element();
 
-        if (head.getState() == CharacterState.FINISHED_ACTION) {
-            head.setState(CharacterState.IDLE);
-            turnQueue.remove();
+            if (head.getState() == CharacterState.FINISHED_ACTION) {
+                head.setState(CharacterState.IDLE);
+                turnQueue.remove();
 
-            if (turnQueue.isEmpty()) {
-                refillTurnQueue();
-            }
+                if (turnQueue.isEmpty()) {
+                    refillTurnQueue();
+                }
 
-            head = turnQueue.element();
+                head = turnQueue.element();
 
-            if (head.getType() != CharacterType.PLAYER) { // the player action is chosen on the game loop, by key input
-                head.chooseAction();
+                if (head.getType() != CharacterType.PLAYER) { // the player action is chosen on the game loop, by key input
+                    head.chooseAction();
+                }
             }
         }
+
 
         for (Character character : characters) {
             character.update(v, this);
