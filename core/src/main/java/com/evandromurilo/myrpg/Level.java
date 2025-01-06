@@ -45,9 +45,8 @@ public class Level {
         monster.region = new TextureRegion(creatureTexture, 0, 0, 10, 10);
         monster.teleport(3f, 35f);
         characters.add(monster);
-        characters.sort(Comparator.comparing(Character::getSpeed));
 
-        turnQueue.addAll(characters);
+        refillTurnQueue();
 
         if (!isPlayerTurn()) {
             Character character = turnQueue.element();
@@ -104,9 +103,12 @@ public class Level {
         Character head = turnQueue.element();
 
         if (head.getState() == CharacterState.FINISHED_ACTION) {
-            turnQueue.remove();
-            turnQueue.add(head);
             head.setState(CharacterState.IDLE);
+            turnQueue.remove();
+
+            if (turnQueue.isEmpty()) {
+                refillTurnQueue();
+            }
 
             head = turnQueue.element();
 
@@ -122,6 +124,16 @@ public class Level {
         characters.removeIf(c -> c.getState() == CharacterState.DEAD);
     }
 
+    /**
+     * Cada novo turno tem sua própria ordem, assim se houver uma alteração de velocidade, vai
+     * ser refletida no turno seguinte.
+     */
+    private void refillTurnQueue() {
+        turnQueue.clear();
+        characters.sort(Comparator.comparing(Character::getSpeed));
+        turnQueue.addAll(characters);
+    }
+
     public void echo(String message) {
         messageBox.push(message);
     }
@@ -132,7 +144,6 @@ public class Level {
 
     public void addCharacter(Character character) {
         characters.add(character);
-        turnQueue.add(character);
     }
 }
 
