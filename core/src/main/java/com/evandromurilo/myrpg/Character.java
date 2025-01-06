@@ -211,12 +211,16 @@ public class Character {
         state = characterState;
     }
 
+    public boolean touches(Character target) {
+        return Math.abs(target.getX() - x) <= 1 &&
+            Math.abs(target.getY() - y) <= 1;
+    }
+
     public void chooseAction() {
         if (type == CharacterType.MONSTER) {
             for (Map.Entry<Character, Alignment> entry : alignmentMap.entrySet()) {
                 // attack first ENEMY (should be only player for now)
-                // will attack from place, not checking proximity
-                if (entry.getValue() == Alignment.ENEMY) {
+                if (entry.getValue() == Alignment.ENEMY && touches(entry.getKey())) {
                     state = CharacterState.ATTACKING;
                     target = entry.getKey();
                     currentTime = 0;
