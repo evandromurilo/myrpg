@@ -80,7 +80,7 @@ public class MainGameScreen implements Screen {
             player.teleport(portal.getTargetX(), targetY);
         }
 
-        if (player.getState() == CharacterState.IDLE) {
+        if (level.isPlayerTurn()) {
             if (Gdx.input.isKeyPressed(Input.Keys.J)) {
                 player.setTarget(0, -1);
             } else if (Gdx.input.isKeyPressed(Input.Keys.K)) {

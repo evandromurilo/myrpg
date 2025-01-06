@@ -20,6 +20,7 @@ public class Character {
     private float totalTime = 0.10f;
     private float currentTime;
     private int hp = 10;
+    private int speed = 10;
     private CharacterType type;
 
     public Character(MapObject obj, Texture peopleTexture) {
@@ -70,7 +71,7 @@ public class Character {
                 if (level.portalAt(x, y) != null) {
                     state = CharacterState.ON_PORTAL;
                 } else {
-                    state = CharacterState.IDLE;
+                    state = CharacterState.FINISHED_ACTION;
                 }
             } else {
                 x = startX+deltaMovement(startX, targetX);
@@ -79,7 +80,7 @@ public class Character {
         } else if (state == CharacterState.TALKING) {
             if (currentTime >= totalTime) {
                 clearTarget();
-                state = CharacterState.IDLE;
+                state = CharacterState.FINISHED_ACTION;
             }
         } else if (state == CharacterState.ATTACKING) {
             if (currentTime >= totalTime) {
@@ -99,7 +100,7 @@ public class Character {
             level.echo("You kill the enemy!");
             target = null;
         }
-        state = CharacterState.IDLE;
+        state = CharacterState.FINISHED_ACTION;
         clearTarget();
     }
 
@@ -170,7 +171,19 @@ public class Character {
         targetY = y;
     }
 
+    public int getSpeed() {
+        return speed;
+    }
+
     private float deltaMovement(float start, float target) {
         return (currentTime/totalTime) * (target-start);
+    }
+
+    public void setState(CharacterState characterState) {
+        state = characterState;
+    }
+
+    public void chooseAction() {
+        state = CharacterState.FINISHED_ACTION; // for now npcs do nothing
     }
 }

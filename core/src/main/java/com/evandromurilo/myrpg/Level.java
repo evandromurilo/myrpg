@@ -8,7 +8,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Level {
     private TiledMap map;
@@ -18,6 +19,7 @@ public class Level {
     private Texture peopleTexture;
     private Texture creatureTexture;
     private MessageBox messageBox;
+    private Queue<Character> turnQueue;
 
     public Level(String mapName, Texture peopleTexture, Texture creatureTexture, MessageBox messageBox) {
         map = new TmxMapLoader().load(mapName);
@@ -25,6 +27,8 @@ public class Level {
         this.messageBox = messageBox;
         this.creatureTexture = creatureTexture;
         portals = new ArrayList<>();
+        turnQueue = new LinkedList<>();
+
         MapLayer portalLayer = map.getLayers().get("Portals");
         for (MapObject obj : portalLayer.getObjects()) {
             portals.add(new Portal(obj));
@@ -41,6 +45,14 @@ public class Level {
         monster.region = new TextureRegion(creatureTexture, 0, 0, 10, 10);
         monster.teleport(3f, 35f);
         characters.add(monster);
+        // characters.sort(Comparator.comparing(Character::getSpeed));
+
+        turnQueue.addAll(characters);
+
+        if (!isPlayerTurn()) {
+            Character character = turnQueue.element();
+            character.chooseAction();
+        }
     }
 
     public boolean hasCollision(float x, float y) {
@@ -83,7 +95,27 @@ public class Level {
         return null;
     }
 
+    public boolean isPlayerTurn() {
+        Character character = turnQueue.element();
+        return character.getType() == CharacterType.PLAYER && character.getState() == CharacterState.IDLE;
+    }
+
     public void update(float v) {
+        Character head = turnQueue.element();
+
+        if (head.getState() == CharacterState.FINISHED_ACTION) {
+            echo(head.getType().toString().concat(" has finished it's turn"));
+            turnQueue.remove();
+            turnQueue.add(head);
+            head.setState(CharacterState.IDLE);
+
+            head = turnQueue.element();
+
+            if (head.getType() != CharacterType.PLAYER) { // the player action is chosen on the game loop, by key input
+                head.chooseAction();
+            }
+        }
+
         for (Character character : characters) {
             character.update(v, this);
         }
@@ -101,6 +133,7 @@ public class Level {
 
     public void addCharacter(Character character) {
         characters.add(character);
+        turnQueue.add(character);
     }
 }
 

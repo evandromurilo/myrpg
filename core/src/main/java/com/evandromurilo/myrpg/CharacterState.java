@@ -5,5 +5,5 @@ public enum CharacterState {
     ON_PORTAL,
     WALKING,
     TALKING,
-    DEAD, ATTACKING
+    DEAD, FINISHED_ACTION, ATTACKING
 }
