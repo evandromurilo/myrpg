@@ -7,6 +7,10 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.Map;
+
 public class Character {
     private float x = 0f;
     private float y = 0f;
@@ -22,6 +26,7 @@ public class Character {
     private int hp = 10;
     private int speed = 10;
     private CharacterType type;
+    private IdentityHashMap<Character, Alignment> alignmentMap = new IdentityHashMap<>();
 
     public Character(MapObject obj, Texture peopleTexture) {
         MapProperties p = obj.getProperties();
@@ -94,24 +99,47 @@ public class Character {
     }
 
     public void doAttack(Level level) {
-        int damage = target.receiveHit(2);
-        level.echo(String.format("You hit for %d damage", damage));
+        int damage = target.receiveHit(2, this);
+
+        if (type == CharacterType.PLAYER) {
+            level.echo(String.format("You hit %s for %d damage", target.getType().toString(), damage));
+        } else {
+            level.echo(String.format("%s hits %s for %d damage", type.toString(), target.getType().toString(), damage));
+        }
+
         if (target.getState() == CharacterState.DEAD) {
-            level.echo("You kill the enemy!");
+            if (type == CharacterType.PLAYER) {
+                level.echo("You kill the enemy!");
+            } else {
+                level.echo(String.format("You were killed by %s!", type.toString()));
+            }
+
             target = null;
         }
         state = CharacterState.FINISHED_ACTION;
         clearTarget();
     }
 
-    public int receiveHit(int strength) {
+    public int receiveHit(int strength, Character attacker) {
         hp -= strength;
         if (hp <= 0) {
             state = CharacterState.DEAD;
             return strength+hp;
         } else {
+            if (type == CharacterType.MONSTER) {
+                // simple monster AI for now: attack when attacked
+                setAlignment(attacker, Alignment.ENEMY);
+            }
             return strength;
         }
+    }
+
+    public void setAlignment(Character target, Alignment alignment) {
+        alignmentMap.put(target, alignment);
+    }
+
+    public Alignment getAligment(Character target) {
+        return alignmentMap.getOrDefault(target, Alignment.NEUTRAL);
     }
 
     public void startMove()
@@ -184,6 +212,19 @@ public class Character {
     }
 
     public void chooseAction() {
+        if (type == CharacterType.MONSTER) {
+            for (Map.Entry<Character, Alignment> entry : alignmentMap.entrySet()) {
+                // attack first ENEMY (should be only player for now)
+                // will attack from place, not checking proximity
+                if (entry.getValue() == Alignment.ENEMY) {
+                    state = CharacterState.ATTACKING;
+                    target = entry.getKey();
+                    currentTime = 0;
+                    return;
+                }
+            }
+        }
+
         state = CharacterState.FINISHED_ACTION; // for now npcs do nothing
     }
 }

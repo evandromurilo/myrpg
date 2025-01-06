@@ -44,7 +44,7 @@ public class MessageBox {
         Label text = new Label(message, new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         text.setWrap(true);
         Cell<Label> newMessage = messagesTable.add(text);
-        newMessage.width(150).row();
+        newMessage.width(300).row();
         messageScroller.scrollTo(0, 0, 0, 0);
     }
 
