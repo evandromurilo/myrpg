@@ -220,10 +220,20 @@ public class Character {
         if (type == CharacterType.MONSTER) {
             for (Map.Entry<Character, Alignment> entry : alignmentMap.entrySet()) {
                 // attack first ENEMY (should be only player for now)
-                if (entry.getValue() == Alignment.ENEMY && touches(entry.getKey())) {
-                    state = CharacterState.ATTACKING;
-                    target = entry.getKey();
-                    currentTime = 0;
+                if (entry.getValue() == Alignment.ENEMY) {
+                    if (touches(entry.getKey())) {
+                        state = CharacterState.ATTACKING;
+                        target = entry.getKey();
+                        currentTime = 0;
+
+                    } else {
+                        // flies at player!
+                        state = CharacterState.WALKING;
+                        targetX = entry.getKey().getX() - 1;
+                        targetY = entry.getKey().getY();
+                        currentTime = 0;
+                    }
+
                     return;
                 }
             }
