@@ -21,7 +21,7 @@ public class Character {
     private float targetY;
     private float targetX;
     private Character target;
-    private float totalTime = 0.10f;
+    private float totalTime = 0.13f;
     private float currentTime;
     private int hp = 10;
     private int speed = 10;
