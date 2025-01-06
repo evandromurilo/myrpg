@@ -45,7 +45,7 @@ public class Level {
         monster.region = new TextureRegion(creatureTexture, 0, 0, 10, 10);
         monster.teleport(3f, 35f);
         characters.add(monster);
-        // characters.sort(Comparator.comparing(Character::getSpeed));
+        characters.sort(Comparator.comparing(Character::getSpeed));
 
         turnQueue.addAll(characters);
 
@@ -104,7 +104,6 @@ public class Level {
         Character head = turnQueue.element();
 
         if (head.getState() == CharacterState.FINISHED_ACTION) {
-            echo(head.getType().toString().concat(" has finished it's turn"));
             turnQueue.remove();
             turnQueue.add(head);
             head.setState(CharacterState.IDLE);
