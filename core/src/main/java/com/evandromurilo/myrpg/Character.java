@@ -150,6 +150,28 @@ public class Character {
         currentTime = 0f;
     }
 
+    public boolean attemptMoveTowards(Character target, Level level) {
+        float dy = target.getY() - y;
+
+        if (Math.abs(dy) > 1) {
+            targetX = x;
+            targetY = y + (dy > 0 ? 1 : -1);
+        }
+
+        float dx = target.getX() - x;
+        if (Math.abs(dx) > 1) {
+            targetY = y;
+            targetX = x + (dx > 0 ? 1 : -1);
+        }
+
+        if (canWalk(level, targetX, targetY)) {
+            startMove();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public boolean canWalk(Level level, float x, float y)
     {
         if (level.hasCollision(x, y)) {
@@ -212,11 +234,10 @@ public class Character {
     }
 
     public boolean touches(Character target) {
-        return Math.abs(target.getX() - x) <= 1 &&
-            Math.abs(target.getY() - y) <= 1;
+        return (Math.abs(target.getX() - x) + Math.abs(target.getY() - y)) <= 1;
     }
 
-    public void chooseAction() {
+    public void chooseAction(Level level) {
         if (type == CharacterType.MONSTER) {
             for (Map.Entry<Character, Alignment> entry : alignmentMap.entrySet()) {
                 // attack first ENEMY (should be only player for now)
@@ -227,10 +248,9 @@ public class Character {
                         currentTime = 0;
 
                     } else {
-                        // flies at player!
-                        targetX = entry.getKey().getX() - 1;
-                        targetY = entry.getKey().getY();
-                        startMove();
+                        if (!attemptMoveTowards(entry.getKey(), level)) {
+                            state = CharacterState.FINISHED_ACTION; // for now npcs do nothing
+                        }
                     }
 
                     return;

@@ -50,7 +50,7 @@ public class Level {
 
         if (!isPlayerTurn()) {
             Character character = turnQueue.element();
-            character.chooseAction();
+            character.chooseAction(this);
         }
     }
 
@@ -114,7 +114,7 @@ public class Level {
                 head = turnQueue.element();
 
                 if (head.getType() != CharacterType.PLAYER) { // the player action is chosen on the game loop, by key input
-                    head.chooseAction();
+                    head.chooseAction(this);
                 }
             }
         }
