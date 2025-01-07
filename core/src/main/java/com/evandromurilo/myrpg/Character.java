@@ -228,10 +228,9 @@ public class Character {
 
                     } else {
                         // flies at player!
-                        state = CharacterState.WALKING;
                         targetX = entry.getKey().getX() - 1;
                         targetY = entry.getKey().getY();
-                        currentTime = 0;
+                        startMove();
                     }
 
                     return;
