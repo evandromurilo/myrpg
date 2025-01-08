@@ -4,10 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
-import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -76,7 +73,7 @@ public class Character {
                 if (level.portalAt(x, y) != null) {
                     state = CharacterState.ON_PORTAL;
                 } else {
-                    state = CharacterState.FINISHED_ACTION;
+                    endTurn();
                 }
             } else {
                 x = startX+deltaMovement(startX, targetX);
@@ -85,7 +82,7 @@ public class Character {
         } else if (state == CharacterState.TALKING) {
             if (currentTime >= totalTime) {
                 clearTarget();
-                state = CharacterState.FINISHED_ACTION;
+                endTurn();
             }
         } else if (state == CharacterState.ATTACKING) {
             if (currentTime >= totalTime) {
@@ -116,7 +113,7 @@ public class Character {
 
             target = null;
         }
-        state = CharacterState.FINISHED_ACTION;
+        endTurn();
         clearTarget();
     }
 
@@ -237,6 +234,10 @@ public class Character {
         return (Math.abs(target.getX() - x) + Math.abs(target.getY() - y)) <= 1;
     }
 
+    public void endTurn() {
+        state = CharacterState.FINISHED_ACTION;
+    }
+
     public void chooseAction(Level level) {
         if (type == CharacterType.MONSTER) {
             for (Map.Entry<Character, Alignment> entry : alignmentMap.entrySet()) {
@@ -249,7 +250,7 @@ public class Character {
 
                     } else {
                         if (!attemptMoveTowards(entry.getKey(), level)) {
-                            state = CharacterState.FINISHED_ACTION; // for now npcs do nothing
+                            endTurn(); // for now npcs do nothing
                         }
                     }
 
@@ -258,6 +259,6 @@ public class Character {
             }
         }
 
-        state = CharacterState.FINISHED_ACTION; // for now npcs do nothing
+        endTurn(); // for now npcs do nothing
     }
 }

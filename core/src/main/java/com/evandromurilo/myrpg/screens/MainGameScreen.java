@@ -3,18 +3,12 @@ package com.evandromurilo.myrpg.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.evandromurilo.myrpg.*;
 import com.evandromurilo.myrpg.Character;
 
@@ -89,6 +83,8 @@ public class MainGameScreen implements Screen {
                 player.setTarget(-1, 0);
             } else if (Gdx.input.isKeyPressed(Input.Keys.L)) {
                 player.setTarget(1, 0);
+            } else if (Gdx.input.isKeyJustPressed(Input.Keys.PERIOD)) {
+                player.endTurn();
             }
         }
 
