@@ -149,14 +149,12 @@ public class Character {
 
     public boolean attemptMoveTowards(Character target, Level level) {
         float dy = target.getY() - y;
+        float dx = target.getX() - x;
 
-        if (Math.abs(dy) > 1) {
+        if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) >= 1) {
             targetX = x;
             targetY = y + (dy > 0 ? 1 : -1);
-        }
-
-        float dx = target.getX() - x;
-        if (Math.abs(dx) > 1) {
+        } else if (Math.abs(dx) >= 1) {
             targetY = y;
             targetX = x + (dx > 0 ? 1 : -1);
         }
