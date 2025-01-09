@@ -24,6 +24,7 @@ public class Character {
     private int speed = 10;
     private CharacterType type;
     private IdentityHashMap<Character, Alignment> alignmentMap = new IdentityHashMap<>();
+    private ItemBag itemBag;
 
     public Character(MapObject obj, Texture peopleTexture) {
         MapProperties p = obj.getProperties();
@@ -258,5 +259,9 @@ public class Character {
         }
 
         endTurn(); // for now npcs do nothing
+    }
+
+    public void setItemBag(ItemBag itemBag) {
+        this.itemBag = itemBag;
     }
 }

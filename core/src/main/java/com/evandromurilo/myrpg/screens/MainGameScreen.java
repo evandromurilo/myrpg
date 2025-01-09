@@ -34,6 +34,7 @@ public class MainGameScreen implements Screen {
         spriteBatch = new SpriteBatch();
 
         player.teleport(3f, 30f);
+        player.setItemBag(new ItemBag(3, 6, "Small bag"));
 
         peopleTexture = new Texture(Gdx.files.internal("People.png"));
         creatureTexture = new Texture(Gdx.files.internal("Creatures.png"));
