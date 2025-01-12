@@ -40,8 +40,6 @@ public class MainGameScreen implements Screen {
         player.teleport(3f, 30f);
         player.setItemBag(new ItemBag(3, 6, "Small bag"));
 
-        inventoryUI = new InventoryUI(player.getItemBag());
-
         peopleTexture = new Texture(Gdx.files.internal("People.png"));
         creatureTexture = new Texture(Gdx.files.internal("Creatures.png"));
 
@@ -96,6 +94,7 @@ public class MainGameScreen implements Screen {
                     player.endTurn();
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
                     showingInventory = true;
+                    inventoryUI = new InventoryUI(player.getItemBag());
                 }
             }
 

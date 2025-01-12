@@ -31,6 +31,9 @@ public class Character {
         if (p.get("type").equals("merchant")) {
             type = CharacterType.MERCHANT;
             region = new TextureRegion(peopleTexture, 0, 20, 10, 10);
+        } else if (p.get("type").equals("giver")) {
+            type = CharacterType.GIVER;
+            region = new TextureRegion(peopleTexture, 0, 240, 10, 10);
         } else {
             region = new TextureRegion(peopleTexture, 0, 0, 10, 10);
         }
@@ -49,6 +52,12 @@ public class Character {
             if (character != null) {
                 if (character.getType() == CharacterType.MERCHANT) {
                     level.echo("Greetings, adventurer!");
+                    state = CharacterState.TALKING;
+                    currentTime = 0;
+                    // target = character;
+                } else if (character.getType() == CharacterType.GIVER) {
+                    level.echo("Here, take this!");
+                    receiveItem(new Item("Gold"));
                     state = CharacterState.TALKING;
                     currentTime = 0;
                     // target = character;
@@ -89,6 +98,12 @@ public class Character {
             if (currentTime >= totalTime) {
                 doAttack(level);
             }
+        }
+    }
+
+    private void receiveItem(Item item) {
+        if (itemBag != null) {
+            itemBag.store(item);
         }
     }
 

@@ -28,4 +28,16 @@ public class ItemBag extends Item {
     public ItemSlot[][] getSlots() {
         return slots;
     }
+
+    public void store(Item item) {
+        for (ItemSlot[] itemSlots : slots) {
+            for (ItemSlot slot : itemSlots) {
+                if (slot.getItem() == null || slot.getItem().getName().equals(item.getName())) {
+                    slot.setItem(item);
+                    slot.addQuantity();
+                    return;
+                }
+            }
+        }
+    }
 }

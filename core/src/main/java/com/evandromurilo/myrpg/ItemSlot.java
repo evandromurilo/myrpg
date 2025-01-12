@@ -17,7 +17,7 @@ public class ItemSlot {
     public String getName()
     {
         if (item != null) {
-            return item.getName();
+            return String.format("%s (%d)", item.getName(), quantity);
         } else {
             return "Empty";
         }
@@ -25,5 +25,13 @@ public class ItemSlot {
 
     public Item getItem() {
         return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
+    public void addQuantity() {
+        this.quantity++;
     }
 }
