@@ -57,7 +57,7 @@ public class Character {
                     // target = character;
                 } else if (character.getType() == CharacterType.GIVER) {
                     level.echo("Here, take this!");
-                    receiveItem(new Item("Gold"));
+                    receiveItem(new Item("Gold", ItemType.GOLD), 10);
                     state = CharacterState.TALKING;
                     currentTime = 0;
                     // target = character;
@@ -104,6 +104,12 @@ public class Character {
     private void receiveItem(Item item) {
         if (itemBag != null) {
             itemBag.store(item);
+        }
+    }
+
+    private void receiveItem(Item item, int quantity) {
+        if (itemBag != null) {
+            itemBag.store(item, quantity);
         }
     }
 

@@ -6,7 +6,7 @@ public class ItemBag extends Item {
     private int width;
 
     public ItemBag(int width, int height, String name) {
-        super(name);
+        super(name, ItemType.BAG);
         this.width = width;
         this.height = height;
         slots = new ItemSlot[height][width];
@@ -29,15 +29,27 @@ public class ItemBag extends Item {
         return slots;
     }
 
-    public void store(Item item) {
+    public ItemSlot findSuitableSlot(Item item) {
         for (ItemSlot[] itemSlots : slots) {
             for (ItemSlot slot : itemSlots) {
-                if (slot.getItem() == null || slot.getItem().getName().equals(item.getName())) {
-                    slot.setItem(item);
-                    slot.addQuantity();
-                    return;
+                if (slot.getItem() == null || (!slot.getItem().isUnique() && slot.getItem().getName().equals(item.getName()))) {
+                    return slot;
                 }
             }
         }
+
+        return null;
+    }
+
+    public void store(Item item) {
+        ItemSlot slot = findSuitableSlot(item);
+        slot.setItem(item);
+        slot.addQuantity(1);
+    }
+
+    public void store(Item item, int quantity) {
+        ItemSlot slot = findSuitableSlot(item);
+        slot.setItem(item);
+        slot.addQuantity(quantity);
     }
 }

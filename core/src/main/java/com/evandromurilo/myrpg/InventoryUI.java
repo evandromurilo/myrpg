@@ -3,21 +3,20 @@ package com.evandromurilo.myrpg;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import org.w3c.dom.Text;
 
 public class InventoryUI {
     private Stage stage;
     private DragAndDrop dragAndDrop;
-    private Table table;
+    private Table root;
+    private Table bagTable;
+    private Table gearTable;
     private Skin skin;
     private ItemBag bag;
 
@@ -27,8 +26,12 @@ public class InventoryUI {
         stage = new Stage(new ScreenViewport());
 
         dragAndDrop = new DragAndDrop();
-        table = new Table();
-        table.setFillParent(true);
+        root = new Table();
+        root.setFillParent(true);
+
+        bagTable = new Table();
+        gearTable = new Table();
+
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         // Build the grid of slots
@@ -44,11 +47,20 @@ public class InventoryUI {
                     }
                 });
 
-                table.add(slotActor).size(64).pad(2);
+                bagTable.add(slotActor).size(64).pad(2);
             }
-            table.row();
+            bagTable.row();
         }
-        stage.addActor(table);
+
+        TextButton weaponGear = new TextButton("Weapon", skin);
+        TextButton bodyGear = new TextButton("Body", skin);
+
+        gearTable.add(weaponGear).size(64).pad(2);
+        gearTable.add(bodyGear).size(64).pad(2);
+
+        root.add(bagTable);
+        root.add(gearTable).padLeft(10);
+        stage.addActor(root);
     }
 
     public void render(float delta) {

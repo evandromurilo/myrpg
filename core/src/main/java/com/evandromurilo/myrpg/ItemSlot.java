@@ -17,7 +17,11 @@ public class ItemSlot {
     public String getName()
     {
         if (item != null) {
-            return String.format("%s (%d)", item.getName(), quantity);
+            if (item.isUnique()) {
+                return item.getName();
+            } else {
+                return String.format("%s (%d)", item.getName(), quantity);
+            }
         } else {
             return "Empty";
         }
@@ -31,7 +35,7 @@ public class ItemSlot {
         this.item = item;
     }
 
-    public void addQuantity() {
-        this.quantity++;
+    public void addQuantity(int quantity) {
+        this.quantity += quantity;
     }
 }
