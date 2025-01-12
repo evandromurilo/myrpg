@@ -21,9 +21,13 @@ public class MainGameScreen implements Screen {
     private SpriteBatch spriteBatch;
     private Level level;
     private MessageBox messageBox;
+    private boolean showingInventory;
+    private InventoryUI inventoryUI;
 
     @Override
     public void show() {
+        showingInventory = false;
+
         player = new Character(CharacterType.PLAYER);
         camera = new OrthographicCamera();
 
@@ -35,6 +39,8 @@ public class MainGameScreen implements Screen {
 
         player.teleport(3f, 30f);
         player.setItemBag(new ItemBag(3, 6, "Small bag"));
+
+        inventoryUI = new InventoryUI(player.getItemBag());
 
         peopleTexture = new Texture(Gdx.files.internal("People.png"));
         creatureTexture = new Texture(Gdx.files.internal("Creatures.png"));
@@ -62,35 +68,43 @@ public class MainGameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        level.update(v);
+        if (!showingInventory) {
+            level.update(v);
 
-        if (player.getState() == CharacterState.ON_PORTAL) {
-            Portal portal = level.portalAt(player.getX(), player.getY());
-            Gdx.app.debug("Map", String.format("Portal hit for %s", portal.getTargetMap()));
-            loadMap(portal.getTargetMap());
-            float targetY = portal.getTargetY();
-            // flip y, porque salvamos as coordenadas do jeito que o tiled apresenta
-            // nos outros lugares a framework faz o flip sozinha, com essa mesma conta inclusive
-            targetY = (int) level.getHeight()- targetY - 1;
-            player.teleport(portal.getTargetX(), targetY);
-        }
-
-        if (level.isPlayerTurn()) {
-            if (Gdx.input.isKeyPressed(Input.Keys.J)) {
-                player.setTarget(0, -1);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.K)) {
-                player.setTarget(0, 1);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
-                player.setTarget(-1, 0);
-            } else if (Gdx.input.isKeyPressed(Input.Keys.L)) {
-                player.setTarget(1, 0);
-            } else if (Gdx.input.isKeyJustPressed(Input.Keys.PERIOD)) {
-                player.endTurn();
+            if (player.getState() == CharacterState.ON_PORTAL) {
+                Portal portal = level.portalAt(player.getX(), player.getY());
+                Gdx.app.debug("Map", String.format("Portal hit for %s", portal.getTargetMap()));
+                loadMap(portal.getTargetMap());
+                float targetY = portal.getTargetY();
+                // flip y, porque salvamos as coordenadas do jeito que o tiled apresenta
+                // nos outros lugares a framework faz o flip sozinha, com essa mesma conta inclusive
+                targetY = (int) level.getHeight()- targetY - 1;
+                player.teleport(portal.getTargetX(), targetY);
             }
-        }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
-            messageBox.clear();
+            if (level.isPlayerTurn()) {
+                if (Gdx.input.isKeyPressed(Input.Keys.J)) {
+                    player.setTarget(0, -1);
+                } else if (Gdx.input.isKeyPressed(Input.Keys.K)) {
+                    player.setTarget(0, 1);
+                } else if (Gdx.input.isKeyPressed(Input.Keys.H)) {
+                    player.setTarget(-1, 0);
+                } else if (Gdx.input.isKeyPressed(Input.Keys.L)) {
+                    player.setTarget(1, 0);
+                } else if (Gdx.input.isKeyJustPressed(Input.Keys.PERIOD)) {
+                    player.endTurn();
+                } else if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+                    showingInventory = true;
+                }
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+                messageBox.clear();
+            }
+        } else {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
+                showingInventory = false;
+            }
         }
 
         camera.position.x = player.getX();
@@ -109,6 +123,10 @@ public class MainGameScreen implements Screen {
         spriteBatch.end();
 
         messageBox.draw(v);
+
+        if (showingInventory) {
+            inventoryUI.render(v);
+        }
     }
 
     @Override

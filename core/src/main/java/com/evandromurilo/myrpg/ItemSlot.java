@@ -13,4 +13,17 @@ public class ItemSlot {
         this.item = item;
         this.quantity = quantity;
     }
+
+    public String getName()
+    {
+        if (item != null) {
+            return item.getName();
+        } else {
+            return "Empty";
+        }
+    }
+
+    public Item getItem() {
+        return item;
+    }
 }

@@ -264,4 +264,8 @@ public class Character {
     public void setItemBag(ItemBag itemBag) {
         this.itemBag = itemBag;
     }
+
+    public ItemBag getItemBag() {
+        return itemBag;
+    }
 }
