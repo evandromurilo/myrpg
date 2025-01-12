@@ -2,12 +2,14 @@ package com.evandromurilo.myrpg;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import org.w3c.dom.Text;
@@ -23,7 +25,6 @@ public class InventoryUI {
         this.bag = bag;
 
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
 
         dragAndDrop = new DragAndDrop();
         table = new Table();
@@ -35,6 +36,14 @@ public class InventoryUI {
             for (int col = 0; col < bag.getWidth(); col++) {
                 final ItemSlot slot = bag.getSlots()[row][col];
                 TextButton slotActor = new TextButton(slot.getName(), skin);
+
+                slotActor.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        Gdx.app.debug("Inventory", String.format("Clicked on %s", slot.getName()));
+                    }
+                });
+
                 table.add(slotActor).size(64).pad(2);
             }
             table.row();
@@ -43,7 +52,6 @@ public class InventoryUI {
     }
 
     public void render(float delta) {
-        stage.getViewport().apply();
         stage.act(delta);
         stage.draw();
     }

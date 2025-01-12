@@ -21,8 +21,6 @@ public class MessageBox {
 
     public MessageBox() {
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
-
         messages = new ArrayList<>();
 
         Table root = new Table();
@@ -57,5 +55,9 @@ public class MessageBox {
         stage.getViewport().apply();
         stage.act(v);
         stage.draw();
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 }

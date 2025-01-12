@@ -69,6 +69,7 @@ public class MainGameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (!showingInventory) {
+            Gdx.input.setInputProcessor(messageBox.getStage());
             level.update(v);
 
             if (player.getState() == CharacterState.ON_PORTAL) {
@@ -102,6 +103,8 @@ public class MainGameScreen implements Screen {
                 messageBox.clear();
             }
         } else {
+            Gdx.input.setInputProcessor(inventoryUI.getStage());
+
             if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
                 showingInventory = false;
             }
