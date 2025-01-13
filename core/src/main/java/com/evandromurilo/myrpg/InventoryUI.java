@@ -19,8 +19,9 @@ public class InventoryUI {
     private Table gearTable;
     private Skin skin;
     private ItemBag bag;
+    private GearSet gearSet;
 
-    public InventoryUI(ItemBag bag) {
+    public InventoryUI(ItemBag bag, GearSet gearSet) {
         this.bag = bag;
 
         stage = new Stage(new ScreenViewport());
@@ -52,11 +53,10 @@ public class InventoryUI {
             bagTable.row();
         }
 
-        TextButton weaponGear = new TextButton("Weapon", skin);
-        TextButton bodyGear = new TextButton("Body", skin);
-
-        gearTable.add(weaponGear).size(64).pad(2);
-        gearTable.add(bodyGear).size(64).pad(2);
+        for (GearSlot slot : gearSet.getSlots()) {
+            TextButton slotActor = new TextButton(slot.getName(), skin);
+            gearTable.add(slotActor).size(64).pad(2);
+        }
 
         root.add(bagTable);
         root.add(gearTable).padLeft(10);

@@ -25,6 +25,7 @@ public class Character {
     private CharacterType type;
     private IdentityHashMap<Character, Alignment> alignmentMap = new IdentityHashMap<>();
     private ItemBag itemBag;
+    private GearSet gearSet;
 
     public Character(MapObject obj, Texture peopleTexture) {
         MapProperties p = obj.getProperties();
@@ -57,7 +58,7 @@ public class Character {
                     // target = character;
                 } else if (character.getType() == CharacterType.GIVER) {
                     level.echo("Here, take this!");
-                    receiveItem(new Item("Gold", ItemType.GOLD), 10);
+                    receiveItem(new Item("Gold", ItemType.GOLD), 4);
                     state = CharacterState.TALKING;
                     currentTime = 0;
                     // target = character;
@@ -101,13 +102,13 @@ public class Character {
         }
     }
 
-    private void receiveItem(Item item) {
+    public void receiveItem(Item item) {
         if (itemBag != null) {
             itemBag.store(item);
         }
     }
 
-    private void receiveItem(Item item, int quantity) {
+    public void receiveItem(Item item, int quantity) {
         if (itemBag != null) {
             itemBag.store(item, quantity);
         }
@@ -288,5 +289,13 @@ public class Character {
 
     public ItemBag getItemBag() {
         return itemBag;
+    }
+
+    public GearSet getGearSet() {
+        return gearSet;
+    }
+
+    public void setGearSet(GearSet gearSet) {
+        this.gearSet = gearSet;
     }
 }
