@@ -24,6 +24,7 @@ public class InventoryUI {
     public InventoryUI(ItemBag bag, GearSet gearSet) {
         this.bag = bag;
 
+        this.gearSet = gearSet;
         stage = new Stage(new ScreenViewport());
 
         dragAndDrop = new DragAndDrop();
@@ -45,6 +46,15 @@ public class InventoryUI {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
                         Gdx.app.debug("Inventory", String.format("Clicked on %s", slot.getName()));
+
+                        if (slot.getItem() != null) {
+                            Item item = slot.getItem();
+                            if (gearSet.equipOnEmptySlot(item)) {
+                                slot.doEmpty();
+                                ((TextButton) actor).setText(slot.getName());
+                                refreshGearSlots();
+                            };
+                        }
                     }
                 });
 
@@ -53,10 +63,7 @@ public class InventoryUI {
             bagTable.row();
         }
 
-        for (GearSlot slot : gearSet.getSlots()) {
-            TextButton slotActor = new TextButton(slot.getName(), skin);
-            gearTable.add(slotActor).size(64).pad(2);
-        }
+        refreshGearSlots();
 
         root.add(bagTable);
         root.add(gearTable).padLeft(10);
@@ -70,5 +77,13 @@ public class InventoryUI {
 
     public Stage getStage() {
         return stage;
+    }
+
+    public void refreshGearSlots() {
+        gearTable.clear();
+        for (GearSlot slot : gearSet.getSlots()) {
+            TextButton slotActor = new TextButton(slot.getDisplayName(), skin);
+            gearTable.add(slotActor).size(64).pad(2);
+        }
     }
 }

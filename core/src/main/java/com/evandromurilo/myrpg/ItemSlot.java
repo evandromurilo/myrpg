@@ -38,4 +38,9 @@ public class ItemSlot {
     public void addQuantity(int quantity) {
         this.quantity += quantity;
     }
+
+    public void doEmpty() {
+        this.quantity = 0;
+        this.item = null;
+    }
 }

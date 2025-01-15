@@ -18,4 +18,8 @@ public class Item {
             this.type == ItemType.BODY_GEAR ||
             this.type == ItemType.BAG;
     }
+
+    public ItemType getType() {
+        return type;
+    }
 }

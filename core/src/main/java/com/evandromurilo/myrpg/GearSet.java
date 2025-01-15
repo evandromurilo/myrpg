@@ -16,4 +16,15 @@ public class GearSet {
     public ArrayList<GearSlot> getSlots() {
         return slots;
     }
+
+    public boolean equipOnEmptySlot(Item item) {
+        for (GearSlot slot : slots) {
+            if (slot.isEmpty() && slot.isAllowed(item.getType())) {
+                slot.setItem(item);
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
