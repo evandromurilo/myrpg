@@ -36,6 +36,26 @@ public class InventoryUI {
 
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
+        refreshBagSlots();
+        refreshGearSlots();
+
+        root.add(bagTable);
+        root.add(gearTable).padLeft(10);
+        stage.addActor(root);
+    }
+
+    public void render(float delta) {
+        stage.act(delta);
+        stage.draw();
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public void refreshBagSlots() {
+        bagTable.clear();
+
         // Build the grid of slots
         for (int row = 0; row < bag.getHeight(); row++) {
             for (int col = 0; col < bag.getWidth(); col++) {
@@ -62,27 +82,34 @@ public class InventoryUI {
             }
             bagTable.row();
         }
-
-        refreshGearSlots();
-
-        root.add(bagTable);
-        root.add(gearTable).padLeft(10);
-        stage.addActor(root);
-    }
-
-    public void render(float delta) {
-        stage.act(delta);
-        stage.draw();
-    }
-
-    public Stage getStage() {
-        return stage;
     }
 
     public void refreshGearSlots() {
         gearTable.clear();
         for (GearSlot slot : gearSet.getSlots()) {
             TextButton slotActor = new TextButton(slot.getDisplayName(), skin);
+
+            slotActor.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    Gdx.app.debug("Gear", String.format("Clicked on %s", slot.getName()));
+
+                    if (slot.getItem() != null) {
+                        Item item = slot.getItem();
+                        ItemSlot bagSlot = bag.findSuitableSlot(item);
+
+                        if (bagSlot != null) {
+                            bagSlot.setItem(item);
+                            bagSlot.addQuantity(1);
+
+                            slot.doEmpty();
+                            refreshGearSlots();
+                            refreshBagSlots();
+                        }
+                    }
+                }
+            });
+
             gearTable.add(slotActor).size(64).pad(2);
         }
     }

@@ -38,6 +38,10 @@ public class GearSlot {
         }
     }
 
+    public void doEmpty() {
+        this.item = null;
+    }
+
     public Item getItem() {
         return item;
     }
