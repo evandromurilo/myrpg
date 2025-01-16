@@ -63,33 +63,6 @@ public class InventoryUI {
         }
     }
 
-    public void refreshBagSlots() {
-//        if (slot.getItem() != null) {
-//            Item item = slot.getItem();
-//            if (gearSet.equipOnEmptySlot(item)) {
-//                slot.doEmpty();
-//                ((TextButton) actor).setText(slot.getName());
-//                refreshGearSlots();
-//            };
-//        }
-    }
-
-    public void refreshGearSlots() {
-//        if (slot.getItem() != null) {
-//            Item item = slot.getItem();
-//            ItemSlot bagSlot = bag.findSuitableSlot(item);
-//
-//            if (bagSlot != null) {
-//                bagSlot.setItem(item);
-//                bagSlot.addQuantity(1);
-//
-//                slot.doEmpty();
-//                refreshGearSlots();
-//                refreshBagSlots();
-//            }
-//        }
-    }
-
     public void checkClick(int mx, int my) {
         float x = START_X;
         float y = START_Y;
@@ -114,6 +87,26 @@ public class InventoryUI {
 
             x = START_X;
             y -= SLOT_HEIGHT + MARGIN;
+        }
+
+        y = START_Y + 100;
+        for (GearSlot slot : gearSet.getSlots()) {
+            if (isPointInRectangle(mx, my, x, y, SLOT_WIDTH, SLOT_HEIGHT)) {
+                Gdx.app.debug("Gear", String.format("Hit %s", slot.getDisplayName()));
+
+                Item item = slot.getItem();
+                if (item != null) {
+                    ItemSlot bagSlot = bag.findSuitableSlot(item);
+
+                    if (bagSlot != null) {
+                        bagSlot.setItem(item);
+                        bagSlot.addQuantity(1);
+
+                        slot.doEmpty();
+                    }
+                }
+            }
+            x += SLOT_WIDTH + MARGIN;
         }
     }
 
