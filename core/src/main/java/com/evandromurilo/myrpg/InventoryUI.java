@@ -6,8 +6,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Vector2;
 
 public class InventoryUI {
+    public final float START_X = 20;
+    public final float START_Y = 400;
+    private final float SLOT_WIDTH = 60;
+    private final float SLOT_HEIGHT = 60;
+    private final float MARGIN = 5;
     private ItemBag bag;
     private GearSet gearSet;
     private Texture inventoryTexture;
@@ -24,20 +31,15 @@ public class InventoryUI {
     }
 
     public void render(float delta, SpriteBatch batch) {
-        float startX = 20;
-        float startY = 200;
-        float slotWidth = 60;
-        float slotHeight = 60;
+        float x = START_X;
+        float y = START_Y;
 
         for (int row = 0; row < bag.getHeight(); row++) {
             for (int col = 0; col < bag.getWidth(); col++) {
                 final ItemSlot slot = bag.getSlots()[row][col];
 
-                float x = startX + col * slotWidth;
-                float y = startY + (bag.getWidth() - row + 1) * slotHeight;
-
                 // Desenha o fundo do slot
-                batch.draw(slotRegion, x, y, slotWidth, slotHeight);
+                batch.draw(slotRegion, x, y, SLOT_WIDTH, SLOT_HEIGHT);
 
                 // Desenha o item, se existir
                 if (slot.getItem() != null) {
@@ -46,15 +48,18 @@ public class InventoryUI {
                     // Desenha texto (nome ou quantidade)
                     font.draw(batch, slot.getName(), x + 5, y + 35);
                 }
+
+                x += SLOT_WIDTH + MARGIN;
             }
+            x = START_X;
+            y -= SLOT_HEIGHT + MARGIN;
         }
 
-        float x = 200;
-        float y = 300;
+        y = START_Y + 100;
         for (GearSlot slot : gearSet.getSlots()) {
-            batch.draw(slotRegion, x, y, slotWidth, slotHeight);
+            batch.draw(slotRegion, x, y, SLOT_WIDTH, SLOT_HEIGHT);
             font.draw(batch, slot.getDisplayName(), x + 5, y + 35);
-            x += slotWidth;
+            x += SLOT_WIDTH + MARGIN;
         }
     }
 
@@ -83,5 +88,41 @@ public class InventoryUI {
 //                refreshBagSlots();
 //            }
 //        }
+    }
+
+    public void checkClick(int mx, int my) {
+        float x = START_X;
+        float y = START_Y;
+
+        for (int row = 0; row < bag.getHeight(); row++) {
+            for (int col = 0; col < bag.getWidth(); col++) {
+                final ItemSlot slot = bag.getSlots()[row][col];
+
+                if (isPointInRectangle(mx, my, x, y, SLOT_WIDTH, SLOT_HEIGHT)) {
+                    Gdx.app.debug("Inventory", String.format("Hit %s", slot.getName()));
+                }
+
+                x += SLOT_WIDTH + MARGIN;
+            }
+
+            x = START_X;
+            y -= SLOT_HEIGHT + MARGIN;
+        }
+    }
+
+    /**
+     *
+     * @param mx Point x
+     * @param my Point y
+     * @param x left of rectangle
+     * @param y bottom of rectangle
+     * @param width width of rectangle
+     * @param height height of rectangle
+     */
+    private boolean isPointInRectangle(int mx, int my, float x, float y, float width, float height) {
+        return mx >= x &&
+            mx <= x+width &&
+            my >= y &&
+            my <= y+height;
     }
 }

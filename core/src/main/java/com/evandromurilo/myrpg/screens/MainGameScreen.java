@@ -116,6 +116,12 @@ public class MainGameScreen implements Screen {
         } else {
             if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
                 showingInventory = false;
+            } else if (Gdx.input.justTouched()) {
+                // inverte coordenada do mouse
+                int my = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+                Gdx.app.debug("Mouse", String.format("justTouched(%d, %d)", Gdx.input.getX(), my));
+                inventoryUI.checkClick(Gdx.input.getX(), my);
             }
         }
 
