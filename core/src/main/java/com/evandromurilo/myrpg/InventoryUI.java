@@ -100,6 +100,13 @@ public class InventoryUI {
 
                 if (isPointInRectangle(mx, my, x, y, SLOT_WIDTH, SLOT_HEIGHT)) {
                     Gdx.app.debug("Inventory", String.format("Hit %s", slot.getName()));
+
+                    if (slot.getItem() != null) {
+                        Item item = slot.getItem();
+                        if (gearSet.equipOnEmptySlot(item)) {
+                            slot.doEmpty();
+                        };
+                    }
                 }
 
                 x += SLOT_WIDTH + MARGIN;
