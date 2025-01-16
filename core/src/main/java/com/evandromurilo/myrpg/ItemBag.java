@@ -31,8 +31,18 @@ public class ItemBag extends Item {
 
     public ItemSlot findSuitableSlot(Item item) {
         for (ItemSlot[] itemSlots : slots) {
+            // first attempt to find an equivalent item
             for (ItemSlot slot : itemSlots) {
-                if (slot.getItem() == null || (!slot.getItem().isUnique() && slot.getItem().getName().equals(item.getName()))) {
+                if (slot.getItem() != null && !slot.getItem().isUnique() && slot.getItem().getName().equals(item.getName())) {
+                    return slot;
+                }
+            }
+        }
+
+        for (ItemSlot[] itemSlots : slots) {
+            // then use an empty slot if available
+            for (ItemSlot slot : itemSlots) {
+                if (slot.getItem() == null) {
                     return slot;
                 }
             }
