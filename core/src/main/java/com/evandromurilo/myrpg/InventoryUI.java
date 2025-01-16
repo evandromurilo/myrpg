@@ -2,115 +2,86 @@ package com.evandromurilo.myrpg;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class InventoryUI {
-    private Stage stage;
-    private DragAndDrop dragAndDrop;
-    private Table root;
-    private Table bagTable;
-    private Table gearTable;
-    private Skin skin;
     private ItemBag bag;
     private GearSet gearSet;
+    private Texture inventoryTexture;
+    private TextureRegion slotRegion;
+    private BitmapFont font;
 
     public InventoryUI(ItemBag bag, GearSet gearSet) {
         this.bag = bag;
-
         this.gearSet = gearSet;
-        stage = new Stage(new ScreenViewport());
 
-        dragAndDrop = new DragAndDrop();
-        root = new Table();
-        root.setFillParent(true);
-
-        bagTable = new Table();
-        gearTable = new Table();
-
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
-
-        refreshBagSlots();
-        refreshGearSlots();
-
-        root.add(bagTable);
-        root.add(gearTable).padLeft(10);
-        stage.addActor(root);
+        inventoryTexture = new Texture(Gdx.files.internal("Inventory.png"));
+        slotRegion = new TextureRegion(inventoryTexture, 0, 0, 10, 10);
+        font = new BitmapFont(); // ou pode carregar um .fnt
     }
 
-    public void render(float delta) {
-        stage.act(delta);
-        stage.draw();
-    }
+    public void render(float delta, SpriteBatch batch) {
+        float startX = 20;
+        float startY = 200;
+        float slotWidth = 60;
+        float slotHeight = 60;
 
-    public Stage getStage() {
-        return stage;
-    }
-
-    public void refreshBagSlots() {
-        bagTable.clear();
-
-        // Build the grid of slots
         for (int row = 0; row < bag.getHeight(); row++) {
             for (int col = 0; col < bag.getWidth(); col++) {
                 final ItemSlot slot = bag.getSlots()[row][col];
-                TextButton slotActor = new TextButton(slot.getName(), skin);
 
-                slotActor.addListener(new ChangeListener() {
-                    @Override
-                    public void changed(ChangeEvent event, Actor actor) {
-                        Gdx.app.debug("Inventory", String.format("Clicked on %s", slot.getName()));
+                float x = startX + col * slotWidth;
+                float y = startY + (bag.getWidth() - row + 1) * slotHeight;
 
-                        if (slot.getItem() != null) {
-                            Item item = slot.getItem();
-                            if (gearSet.equipOnEmptySlot(item)) {
-                                slot.doEmpty();
-                                ((TextButton) actor).setText(slot.getName());
-                                refreshGearSlots();
-                            };
-                        }
-                    }
-                });
+                // Desenha o fundo do slot
+                batch.draw(slotRegion, x, y, slotWidth, slotHeight);
 
-                bagTable.add(slotActor).size(64).pad(2);
+                // Desenha o item, se existir
+                if (slot.getItem() != null) {
+                    //batch.draw(slot.getItem().getTexture(), x, y, slotWidth, slotHeight);
+
+                    // Desenha texto (nome ou quantidade)
+                    font.draw(batch, slot.getName(), x + 5, y + 35);
+                }
             }
-            bagTable.row();
+        }
+
+        float x = 200;
+        float y = 300;
+        for (GearSlot slot : gearSet.getSlots()) {
+            batch.draw(slotRegion, x, y, slotWidth, slotHeight);
+            font.draw(batch, slot.getDisplayName(), x + 5, y + 35);
+            x += slotWidth;
         }
     }
 
+    public void refreshBagSlots() {
+//        if (slot.getItem() != null) {
+//            Item item = slot.getItem();
+//            if (gearSet.equipOnEmptySlot(item)) {
+//                slot.doEmpty();
+//                ((TextButton) actor).setText(slot.getName());
+//                refreshGearSlots();
+//            };
+//        }
+    }
+
     public void refreshGearSlots() {
-        gearTable.clear();
-        for (GearSlot slot : gearSet.getSlots()) {
-            TextButton slotActor = new TextButton(slot.getDisplayName(), skin);
-
-            slotActor.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    Gdx.app.debug("Gear", String.format("Clicked on %s", slot.getName()));
-
-                    if (slot.getItem() != null) {
-                        Item item = slot.getItem();
-                        ItemSlot bagSlot = bag.findSuitableSlot(item);
-
-                        if (bagSlot != null) {
-                            bagSlot.setItem(item);
-                            bagSlot.addQuantity(1);
-
-                            slot.doEmpty();
-                            refreshGearSlots();
-                            refreshBagSlots();
-                        }
-                    }
-                }
-            });
-
-            gearTable.add(slotActor).size(64).pad(2);
-        }
+//        if (slot.getItem() != null) {
+//            Item item = slot.getItem();
+//            ItemSlot bagSlot = bag.findSuitableSlot(item);
+//
+//            if (bagSlot != null) {
+//                bagSlot.setItem(item);
+//                bagSlot.addQuantity(1);
+//
+//                slot.doEmpty();
+//                refreshGearSlots();
+//                refreshBagSlots();
+//            }
+//        }
     }
 }

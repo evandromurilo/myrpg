@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.evandromurilo.myrpg.*;
 import com.evandromurilo.myrpg.Character;
 
@@ -23,6 +24,8 @@ public class MainGameScreen implements Screen {
     private MessageBox messageBox;
     private boolean showingInventory;
     private InventoryUI inventoryUI;
+    private OrthographicCamera uiCamera;
+    private FitViewport uiViewport;
 
     @Override
     public void show() {
@@ -34,6 +37,9 @@ public class MainGameScreen implements Screen {
         // aqui eu digo que quero 30 x 20, que vai ser convertido para a escala
         // na prática, ele vai esticar os tiles até caberem 30 na horizontal e 20 na vertical
         camera.setToOrtho(false, 30, 20);
+
+        uiCamera = new OrthographicCamera();
+        uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         spriteBatch = new SpriteBatch();
 
@@ -108,8 +114,6 @@ public class MainGameScreen implements Screen {
                 messageBox.clear();
             }
         } else {
-            Gdx.input.setInputProcessor(inventoryUI.getStage());
-
             if (Gdx.input.isKeyJustPressed(Input.Keys.I)) {
                 showingInventory = false;
             }
@@ -133,7 +137,11 @@ public class MainGameScreen implements Screen {
         messageBox.draw(v);
 
         if (showingInventory) {
-            inventoryUI.render(v);
+            uiCamera.update();
+            spriteBatch.setProjectionMatrix(uiCamera.combined);
+            spriteBatch.begin();
+            inventoryUI.render(v, spriteBatch);
+            spriteBatch.end();
         }
     }
 
