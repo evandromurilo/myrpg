@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
+
 public class InventoryUI {
     public final float START_X = 20;
     public final float START_Y = 400;
@@ -22,6 +24,7 @@ public class InventoryUI {
     private BitmapFont font;
     private MouseState mouseState;
     private float mouseStateTime = 0;
+    private ArrayList<InventorySlot> slotList = new ArrayList<>();
 
     public InventoryUI(ItemBag bag, GearSet gearSet) {
         this.bag = bag;
@@ -36,12 +39,15 @@ public class InventoryUI {
         float x = START_X;
         float y = START_Y;
 
+        slotList.clear();
+
         for (int row = 0; row < bag.getHeight(); row++) {
             for (int col = 0; col < bag.getWidth(); col++) {
                 final ItemSlot slot = bag.getSlots()[row][col];
 
                 // Desenha o fundo do slot
                 batch.draw(slotRegion, x, y, SLOT_WIDTH, SLOT_HEIGHT);
+                slotList.add(new InventorySlot(slot, x, y, SLOT_WIDTH, SLOT_HEIGHT));
 
                 // Desenha o item, se existir
                 if (slot.getItem() != null) {
@@ -60,7 +66,10 @@ public class InventoryUI {
         y = START_Y + 100;
         for (GearSlot slot : gearSet.getSlots()) {
             batch.draw(slotRegion, x, y, SLOT_WIDTH, SLOT_HEIGHT);
+            slotList.add(new InventorySlot(slot, x, y, SLOT_WIDTH, SLOT_HEIGHT));
+
             font.draw(batch, slot.getDisplayName(), x + 5, y + 35);
+
             x += SLOT_WIDTH + MARGIN;
         }
     }
@@ -74,9 +83,10 @@ public class InventoryUI {
 
         Gdx.app.debug("Mouse", String.format("%s(%d, %d)", newState.name(), mx, my));
 
-
         if (newState == MouseState.DOUBLE_CLICKED) {
             checkDoubleClick(mx, my);
+        } else if (newState == MouseState.HOLDING) {
+            checkHold(mx, my);
         }
     }
 
@@ -106,66 +116,38 @@ public class InventoryUI {
         }
     }
 
+    public void checkHold(int mx, int my) {
+
+    }
+
     public void checkDoubleClick(int mx, int my) {
-        float x = START_X;
-        float y = START_Y;
+        for (InventorySlot slot : slotList) {
+            if (slot.containsPoint(mx, my)) {
+                if (slot.getHolder() instanceof GearSlot holder) {
+                    Gdx.app.debug("Gear", String.format("Hit %s", holder.getDisplayName()));
 
-        for (int row = 0; row < bag.getHeight(); row++) {
-            for (int col = 0; col < bag.getWidth(); col++) {
-                final ItemSlot slot = bag.getSlots()[row][col];
+                    Item item = holder.getItem();
+                    if (item != null) {
+                        ItemSlot bagSlot = bag.findSuitableSlot(item);
 
-                if (isPointInRectangle(mx, my, x, y, SLOT_WIDTH, SLOT_HEIGHT)) {
-                    Gdx.app.debug("Inventory", String.format("Hit %s", slot.getName()));
+                        if (bagSlot != null) {
+                            bagSlot.setItem(item);
+                            bagSlot.addQuantity(1);
 
-                    if (slot.getItem() != null) {
-                        Item item = slot.getItem();
+                            holder.doEmpty();
+                        }
+                    }
+                } else if (slot.getHolder() instanceof ItemSlot holder) {
+                    Gdx.app.debug("Inventory", String.format("Hit %s", holder.getName()));
+
+                    if (holder.getItem() != null) {
+                        Item item = holder.getItem();
                         if (gearSet.equipOnEmptySlot(item)) {
-                            slot.doEmpty();
+                            holder.doEmpty();
                         };
                     }
                 }
-
-                x += SLOT_WIDTH + MARGIN;
             }
-
-            x = START_X;
-            y -= SLOT_HEIGHT + MARGIN;
         }
-
-        y = START_Y + 100;
-        for (GearSlot slot : gearSet.getSlots()) {
-            if (isPointInRectangle(mx, my, x, y, SLOT_WIDTH, SLOT_HEIGHT)) {
-                Gdx.app.debug("Gear", String.format("Hit %s", slot.getDisplayName()));
-
-                Item item = slot.getItem();
-                if (item != null) {
-                    ItemSlot bagSlot = bag.findSuitableSlot(item);
-
-                    if (bagSlot != null) {
-                        bagSlot.setItem(item);
-                        bagSlot.addQuantity(1);
-
-                        slot.doEmpty();
-                    }
-                }
-            }
-            x += SLOT_WIDTH + MARGIN;
-        }
-    }
-
-    /**
-     *
-     * @param mx Point x
-     * @param my Point y
-     * @param x left of rectangle
-     * @param y bottom of rectangle
-     * @param width width of rectangle
-     * @param height height of rectangle
-     */
-    private boolean isPointInRectangle(int mx, int my, float x, float y, float width, float height) {
-        return mx >= x &&
-            mx <= x+width &&
-            my >= y &&
-            my <= y+height;
     }
 }

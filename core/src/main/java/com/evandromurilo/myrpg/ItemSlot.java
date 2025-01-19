@@ -1,6 +1,6 @@
 package com.evandromurilo.myrpg;
 
-public class ItemSlot {
+public class ItemSlot implements ItemHolder {
     private Item item;
     private int quantity;
 

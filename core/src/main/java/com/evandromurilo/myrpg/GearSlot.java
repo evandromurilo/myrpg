@@ -2,7 +2,7 @@ package com.evandromurilo.myrpg;
 
 import java.util.ArrayList;
 
-public class GearSlot {
+public class GearSlot implements ItemHolder {
     private ItemType[] allowedTypes;
     private Item item;
     private String name;
