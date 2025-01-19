@@ -25,6 +25,7 @@ public class InventoryUI {
     private MouseState mouseState;
     private float mouseStateTime = 0;
     private ArrayList<InventorySlot> slotList = new ArrayList<>();
+    private ItemHolder dragging;
 
     public InventoryUI(ItemBag bag, GearSet gearSet) {
         this.bag = bag;
@@ -54,7 +55,9 @@ public class InventoryUI {
                     //batch.draw(slot.getItem().getTexture(), x, y, slotWidth, slotHeight);
 
                     // Desenha texto (nome ou quantidade)
-                    font.draw(batch, slot.getName(), x + 5, y + 35);
+                    if (slot.isVisible()) {
+                        font.draw(batch, slot.getName(), x + 5, y + 35);
+                    }
                 }
 
                 x += SLOT_WIDTH + MARGIN;
@@ -68,13 +71,16 @@ public class InventoryUI {
             batch.draw(slotRegion, x, y, SLOT_WIDTH, SLOT_HEIGHT);
             slotList.add(new InventorySlot(slot, x, y, SLOT_WIDTH, SLOT_HEIGHT));
 
-            font.draw(batch, slot.getDisplayName(), x + 5, y + 35);
+            if (slot.isVisible()) {
+                font.draw(batch, slot.getDisplayName(), x + 5, y + 35);
+            }
 
             x += SLOT_WIDTH + MARGIN;
         }
     }
 
     private void changeMouseState(MouseState newState) {
+        MouseState oldState = mouseState;
         mouseState = newState;
         mouseStateTime = 0;
 
@@ -87,6 +93,8 @@ public class InventoryUI {
             checkDoubleClick(mx, my);
         } else if (newState == MouseState.HOLDING) {
             checkHold(mx, my);
+        } else if (newState == MouseState.RELEASED) {
+            checkRelease(mx, my);
         }
     }
 
@@ -117,7 +125,57 @@ public class InventoryUI {
     }
 
     public void checkHold(int mx, int my) {
+        ItemHolder holder = getSlotAtPoint(mx, my);
 
+        if (holder != null) {
+            dragging = holder;
+            holder.hide();
+        }
+    }
+
+    public void checkRelease(int mx, int my) {
+        if (dragging == null) {
+            return;
+        }
+
+        ItemHolder holder = getSlotAtPoint(mx, my);
+
+        if (holder instanceof ItemSlot holderSlot && dragging instanceof ItemSlot draggingSlot) {
+            Item holderItem = holderSlot.getItem();
+            int holderQuantity = holderSlot.getQuantity();
+
+            holderSlot.setItem(draggingSlot.getItem());
+            holderSlot.setQuantity(draggingSlot.getQuantity());
+
+            draggingSlot.setItem(holderItem);
+            draggingSlot.setQuantity(holderQuantity);
+        } else if (holder instanceof ItemSlot holderSlot && dragging instanceof GearSlot draggingSlot) {
+            if (holder.isEmpty()) {
+                holderSlot.setItem(draggingSlot.getItem());
+                holderSlot.setQuantity(1);
+                draggingSlot.doEmpty();
+            }
+        } else if (holder instanceof GearSlot holderSlot && dragging instanceof ItemSlot draggingSlot) {
+            if (holderSlot.isAllowed(draggingSlot.getItem().getType())) {
+                if (holderSlot.isEmpty()) {
+                    holderSlot.setItem(draggingSlot.getItem());
+                    draggingSlot.doEmpty();
+                } else {
+                    Item draggingItem = draggingSlot.getItem();
+
+                    draggingSlot.setItem(holderSlot.getItem());
+                    draggingSlot.setQuantity(1);
+
+                    holderSlot.setItem(draggingItem);
+                }
+            }
+        }
+
+        if (dragging != null) {
+            dragging.show();
+        }
+
+        dragging = null;
     }
 
     public ItemHolder getSlotAtPoint(int mx, int my) {
