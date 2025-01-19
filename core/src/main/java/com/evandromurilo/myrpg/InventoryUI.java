@@ -110,7 +110,7 @@ public class InventoryUI {
         } else if (mouseState == MouseState.CLICKING) {
             if (!Gdx.input.isTouched()) {
                 changeMouseState(MouseState.CLICKED);
-            } else if (mouseStateTime > 0.3) {
+            } else if (mouseStateTime > 0.1) {
                 changeMouseState(MouseState.HOLDING);
             }
         } else if (mouseState == MouseState.CLICKED) {
