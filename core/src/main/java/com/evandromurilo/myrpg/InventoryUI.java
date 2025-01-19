@@ -20,6 +20,8 @@ public class InventoryUI {
     private Texture inventoryTexture;
     private TextureRegion slotRegion;
     private BitmapFont font;
+    private MouseState mouseState;
+    private float mouseStateTime = 0;
 
     public InventoryUI(ItemBag bag, GearSet gearSet) {
         this.bag = bag;
@@ -63,7 +65,48 @@ public class InventoryUI {
         }
     }
 
-    public void checkClick(int mx, int my) {
+    private void changeMouseState(MouseState newState) {
+        mouseState = newState;
+        mouseStateTime = 0;
+
+        int mx = Gdx.input.getX();
+        int my = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+        Gdx.app.debug("Mouse", String.format("%s(%d, %d)", newState.name(), mx, my));
+
+
+        if (newState == MouseState.DOUBLE_CLICKED) {
+            checkDoubleClick(mx, my);
+        }
+    }
+
+    public void update(float v) {
+        mouseStateTime += v;
+
+        if (!Gdx.input.isTouched() && mouseStateTime > 0.3 && mouseState != MouseState.RELEASED) {
+            changeMouseState(MouseState.RELEASED);
+        } else if (mouseState == MouseState.RELEASED) {
+            if (Gdx.input.isTouched()) {
+                changeMouseState(MouseState.CLICKING);
+            }
+        } else if (mouseState == MouseState.CLICKING) {
+            if (!Gdx.input.isTouched()) {
+                changeMouseState(MouseState.CLICKED);
+            } else if (mouseStateTime > 0.3) {
+                changeMouseState(MouseState.HOLDING);
+            }
+        } else if (mouseState == MouseState.CLICKED) {
+            if (Gdx.input.justTouched()) {
+                changeMouseState(MouseState.DOUBLE_CLICKING);
+            }
+        } else if (mouseState == MouseState.DOUBLE_CLICKING) {
+            if (!Gdx.input.isTouched()) {
+                changeMouseState(MouseState.DOUBLE_CLICKED);
+            }
+        }
+    }
+
+    public void checkDoubleClick(int mx, int my) {
         float x = START_X;
         float y = START_Y;
 
