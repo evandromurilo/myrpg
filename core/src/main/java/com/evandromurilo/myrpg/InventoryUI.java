@@ -120,33 +120,41 @@ public class InventoryUI {
 
     }
 
-    public void checkDoubleClick(int mx, int my) {
+    public ItemHolder getSlotAtPoint(int mx, int my) {
         for (InventorySlot slot : slotList) {
             if (slot.containsPoint(mx, my)) {
-                if (slot.getHolder() instanceof GearSlot holder) {
-                    Gdx.app.debug("Gear", String.format("Hit %s", holder.getDisplayName()));
+                return slot.getHolder();
+            }
+        }
 
-                    Item item = holder.getItem();
-                    if (item != null) {
-                        ItemSlot bagSlot = bag.findSuitableSlot(item);
+        return null;
+    }
 
-                        if (bagSlot != null) {
-                            bagSlot.setItem(item);
-                            bagSlot.addQuantity(1);
+    public void checkDoubleClick(int mx, int my) {
+       ItemHolder slot = getSlotAtPoint(mx, my);
 
-                            holder.doEmpty();
-                        }
-                    }
-                } else if (slot.getHolder() instanceof ItemSlot holder) {
-                    Gdx.app.debug("Inventory", String.format("Hit %s", holder.getName()));
+        if (slot instanceof GearSlot holder) {
+            Gdx.app.debug("Gear", String.format("Hit %s", holder.getDisplayName()));
 
-                    if (holder.getItem() != null) {
-                        Item item = holder.getItem();
-                        if (gearSet.equipOnEmptySlot(item)) {
-                            holder.doEmpty();
-                        };
-                    }
+            Item item = holder.getItem();
+            if (item != null) {
+                ItemSlot bagSlot = bag.findSuitableSlot(item);
+
+                if (bagSlot != null) {
+                    bagSlot.setItem(item);
+                    bagSlot.addQuantity(1);
+
+                    holder.doEmpty();
                 }
+            }
+        } else if (slot instanceof ItemSlot holder) {
+            Gdx.app.debug("Inventory", String.format("Hit %s", holder.getName()));
+
+            if (holder.getItem() != null) {
+                Item item = holder.getItem();
+                if (gearSet.equipOnEmptySlot(item)) {
+                    holder.doEmpty();
+                };
             }
         }
     }
