@@ -27,6 +27,8 @@ public class InventoryUI {
     private float mouseStateTime = 0;
     private ArrayList<InventorySlot> slotList = new ArrayList<>();
     private ItemHolder dragging;
+    int mouseStateStartX;
+    int mouseStateStartY;
 
     public InventoryUI(ItemBag bag, GearSet gearSet) {
         this.bag = bag;
@@ -95,6 +97,8 @@ public class InventoryUI {
         MouseState oldState = mouseState;
         mouseState = newState;
         mouseStateTime = 0;
+        mouseStateStartY = Gdx.input.getY();
+        mouseStateStartX = Gdx.input.getX();
 
         int mx = Gdx.input.getX();
         int my = Gdx.graphics.getHeight() - Gdx.input.getY();
@@ -122,7 +126,7 @@ public class InventoryUI {
         } else if (mouseState == MouseState.CLICKING) {
             if (!Gdx.input.isTouched()) {
                 changeMouseState(MouseState.CLICKED);
-            } else if (mouseStateTime > 0.05) {
+            } else if (Math.abs(mouseStateStartX - Gdx.input.getX()) > 3 || Math.abs(mouseStateStartY - Gdx.input.getY()) > 3) {
                 changeMouseState(MouseState.HOLDING);
             }
         } else if (mouseState == MouseState.CLICKED) {
