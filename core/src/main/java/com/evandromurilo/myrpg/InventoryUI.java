@@ -87,7 +87,7 @@ public class InventoryUI {
             int mx = Gdx.input.getX();
             int my = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-            batch.draw(defaultItemRegion, mx, my, SLOT_WIDTH, SLOT_HEIGHT);
+            batch.draw(defaultItemRegion, mx - SLOT_WIDTH/2, my - SLOT_HEIGHT/2, SLOT_WIDTH, SLOT_HEIGHT);
         }
     }
 
@@ -122,7 +122,7 @@ public class InventoryUI {
         } else if (mouseState == MouseState.CLICKING) {
             if (!Gdx.input.isTouched()) {
                 changeMouseState(MouseState.CLICKED);
-            } else if (mouseStateTime > 0.1) {
+            } else if (mouseStateTime > 0.05) {
                 changeMouseState(MouseState.HOLDING);
             }
         } else if (mouseState == MouseState.CLICKED) {
