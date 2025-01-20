@@ -82,6 +82,13 @@ public class InventoryUI {
 
             x += SLOT_WIDTH + MARGIN;
         }
+
+        if (dragging != null) {
+            int mx = Gdx.input.getX();
+            int my = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+            batch.draw(defaultItemRegion, mx, my, SLOT_WIDTH, SLOT_HEIGHT);
+        }
     }
 
     private void changeMouseState(MouseState newState) {
@@ -132,7 +139,7 @@ public class InventoryUI {
     public void checkHold(int mx, int my) {
         ItemHolder holder = getSlotAtPoint(mx, my);
 
-        if (holder != null) {
+        if (holder != null && !holder.isEmpty()) {
             dragging = holder;
             holder.hide();
         }
