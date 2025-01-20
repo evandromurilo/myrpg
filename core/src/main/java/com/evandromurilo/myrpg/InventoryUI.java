@@ -17,6 +17,7 @@ public class InventoryUI {
     private final float SLOT_WIDTH = 60;
     private final float SLOT_HEIGHT = 60;
     private final float MARGIN = 5;
+    private final TextureRegion defaultItemRegion;
     private ItemBag bag;
     private GearSet gearSet;
     private Texture inventoryTexture;
@@ -32,6 +33,7 @@ public class InventoryUI {
         this.gearSet = gearSet;
 
         inventoryTexture = new Texture(Gdx.files.internal("Inventory.png"));
+        defaultItemRegion = new TextureRegion(inventoryTexture, 10, 0, 10, 10);
         slotRegion = new TextureRegion(inventoryTexture, 0, 0, 10, 10);
         font = new BitmapFont(); // ou pode carregar um .fnt
     }
@@ -52,10 +54,9 @@ public class InventoryUI {
 
                 // Desenha o item, se existir
                 if (slot.getItem() != null) {
-                    //batch.draw(slot.getItem().getTexture(), x, y, slotWidth, slotHeight);
-
                     // Desenha texto (nome ou quantidade)
                     if (slot.isVisible()) {
+                        batch.draw(defaultItemRegion, x, y, SLOT_WIDTH, SLOT_HEIGHT);
                         font.draw(batch, slot.getName(), x + 5, y + 35);
                     }
                 }
@@ -72,6 +73,10 @@ public class InventoryUI {
             slotList.add(new InventorySlot(slot, x, y, SLOT_WIDTH, SLOT_HEIGHT));
 
             if (slot.isVisible()) {
+                if (!slot.isEmpty()) {
+                    batch.draw(defaultItemRegion, x, y, SLOT_WIDTH, SLOT_HEIGHT);
+                }
+
                 font.draw(batch, slot.getDisplayName(), x + 5, y + 35);
             }
 
