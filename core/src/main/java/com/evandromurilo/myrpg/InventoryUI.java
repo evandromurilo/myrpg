@@ -2,6 +2,7 @@ package com.evandromurilo.myrpg;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,6 +19,8 @@ public class InventoryUI {
     private final float SLOT_HEIGHT = 60;
     private final float MARGIN = 5;
     private final TextureRegion defaultItemRegion;
+    private final Sound sound;
+    private final Sound sound2;
     private ItemBag bag;
     private GearSet gearSet;
     private Texture inventoryTexture;
@@ -33,6 +36,9 @@ public class InventoryUI {
     public InventoryUI(ItemBag bag, GearSet gearSet) {
         this.bag = bag;
         this.gearSet = gearSet;
+
+        sound = Gdx.audio.newSound(Gdx.files.internal("02.wav"));
+        sound2 = Gdx.audio.newSound(Gdx.files.internal("10.wav"));
 
         inventoryTexture = new Texture(Gdx.files.internal("Inventory.png"));
         defaultItemRegion = new TextureRegion(inventoryTexture, 10, 0, 10, 10);
@@ -159,6 +165,7 @@ public class InventoryUI {
         ItemHolder holder = getSlotAtPoint(mx, my);
 
         if (holder instanceof ItemSlot holderSlot && dragging instanceof ItemSlot draggingSlot) {
+            sound2.play();
             Item holderItem = holderSlot.getItem();
             int holderQuantity = holderSlot.getQuantity();
 
@@ -169,6 +176,7 @@ public class InventoryUI {
             draggingSlot.setQuantity(holderQuantity);
         } else if (holder instanceof ItemSlot holderSlot && dragging instanceof GearSlot draggingSlot) {
             if (holder.isEmpty()) {
+                sound2.play();
                 holderSlot.setItem(draggingSlot.getItem());
                 holderSlot.setQuantity(1);
                 draggingSlot.doEmpty();
@@ -176,9 +184,11 @@ public class InventoryUI {
         } else if (holder instanceof GearSlot holderSlot && dragging instanceof ItemSlot draggingSlot) {
             if (holderSlot.isAllowed(draggingSlot.getItem().getType())) {
                 if (holderSlot.isEmpty()) {
+                    sound2.play();
                     holderSlot.setItem(draggingSlot.getItem());
                     draggingSlot.doEmpty();
                 } else {
+                    sound2.play();
                     Item draggingItem = draggingSlot.getItem();
 
                     draggingSlot.setItem(holderSlot.getItem());
@@ -217,6 +227,7 @@ public class InventoryUI {
                 ItemSlot bagSlot = bag.findSuitableSlot(item);
 
                 if (bagSlot != null) {
+                    sound.play();
                     bagSlot.setItem(item);
                     bagSlot.addQuantity(1);
 
@@ -229,6 +240,7 @@ public class InventoryUI {
             if (holder.getItem() != null) {
                 Item item = holder.getItem();
                 if (gearSet.equipOnEmptySlot(item)) {
+                    sound.play();
                     holder.doEmpty();
                 };
             }
