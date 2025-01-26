@@ -45,7 +45,9 @@ public class MainGameScreen implements Screen {
 
         player.teleport(3f, 30f);
         player.setItemBag(new ItemBag(3, 6, "Small bag"));
-        player.receiveItem(new Item("Sword", ItemType.WEAPON_GEAR));
+        Item sword = new Item("Sword", ItemType.WEAPON_GEAR);
+        sword.addModifier(StatusType.ATTACK, 2);
+        player.receiveItem(sword);
 
         GearSet playerGear = new GearSet();
         playerGear.addSlot(new GearSlot("Weapon", ItemType.WEAPON_GEAR));

@@ -118,8 +118,25 @@ public class Character {
         return type;
     }
 
+    public float getStatusValue(StatusType statusType) {
+        float total = 0f;
+
+        if (gearSet == null) {
+            return total;
+        }
+
+        for (Item item : gearSet.getItems()) {
+            for (StatusModifier modifier : item.getModifiers()) {
+                if (modifier.getStatusType() == statusType) {
+                    total += modifier.getModifier();
+                }
+            }
+        }
+        return total;
+    }
+
     public void doAttack(Level level) {
-        int damage = target.receiveHit(2, this);
+        int damage = target.receiveHit((int) getStatusValue(StatusType.ATTACK) + 2, this);
 
         if (type == CharacterType.PLAYER) {
             level.echo(String.format("You hit %s for %d damage", target.getType().toString(), damage));

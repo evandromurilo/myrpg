@@ -27,4 +27,16 @@ public class GearSet {
 
         return false;
     }
+
+    public ArrayList<Item> getItems() {
+        ArrayList<Item> items = new ArrayList<>();
+
+        for (GearSlot slot : slots) {
+            if (slot.getItem() != null) {
+                items.add(slot.getItem());
+            }
+        }
+
+        return items;
+    }
 }
